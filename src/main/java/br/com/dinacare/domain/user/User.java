@@ -17,7 +17,7 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
@@ -54,6 +54,7 @@ public class User {
     @Column(name = "work_days", nullable = false)
     private Set<WorkDays> workDays;
 
+    @Builder.Default
     private Boolean active = true;
 
 }
