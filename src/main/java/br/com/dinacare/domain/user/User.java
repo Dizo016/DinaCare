@@ -55,6 +55,7 @@ public class User {
     private Set<WorkDays> workDays;
 
     @Builder.Default
+    @Column(nullable = false)
     private Boolean active = true;
 
 }

@@ -7,10 +7,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -31,11 +31,11 @@ public class Appointment {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "procedure_id", nullable = false)
+    @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id", nullable = false)
+    @JoinColumn(name = "procedure_id", nullable = false)
     private Procedure procedure;
 
     @Column(nullable = false)
@@ -44,13 +44,14 @@ public class Appointment {
     @Enumerated(EnumType.STRING)
     private AppointmentStatus appointmentStatus;
 
+    @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
     @Column
     private String notes;
 
-    @Column(name = "charged_price", nullable = false)
-    private Double chargedPrice;
+    @Column(name = "charged_price", nullable = false, precision = 10, scale = 2)
+    private BigDecimal chargedPrice;
 
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
@@ -59,6 +60,6 @@ public class Appointment {
     private LocalDateTime endTime;
 
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 }

@@ -3,6 +3,7 @@ package br.com.dinacare.domain.procedure;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -25,8 +26,9 @@ public class Procedure {
     private Integer duration;
 
     @Column(nullable = false)
-    private Double price;
+    private BigDecimal price;
 
     @Builder.Default
+    @Column(nullable = false)
     private Boolean active = true;
 }

@@ -1,4 +1,15 @@
 package br.com.dinacare.repository.procedure;
 
-public interface ProcedureRepository {
+import br.com.dinacare.domain.procedure.Procedure;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.UUID;
+
+@Repository
+public interface ProcedureRepository extends JpaRepository<Procedure, UUID> {
+
+    List<Procedure> findByActiveTrue();
+    List<Procedure> findByPriceBetween(Double min, Double max);
 }
