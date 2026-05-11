@@ -84,10 +84,9 @@ public class AppointmentService {
         LocalDateTime start = request.startTime();
         LocalDateTime end   = start.plusMinutes(procedure.getDuration());
 
-        boolean conflict = appointmentRepository
-                .findByUserAndStartTimeBetween(user, start, end)
-                .stream()
-                .anyMatch(a -> !a.getAppointmentStatus().equals(AppointmentStatus.CANCELED));
+        boolean conflict = !appointmentRepository
+                .findConflictingAppointments(user, start, end)
+                .isEmpty();
 
         if (conflict) {
             throw new IllegalStateException("User already has an appointment in this time slot");
