@@ -7,16 +7,15 @@ import br.com.dinacare.domain.client.Client;
 import br.com.dinacare.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
-    List<Appointment> findByUserAndDate(User user, LocalDate date);
+    List<Appointment> findByUserAndStartTimeBetween(User user, LocalDateTime start, LocalDateTime end);
     List<Appointment> findByClient(Client client);
     List<Appointment> findByPaymentStatus(PaymentStatus paymentStatus);
     List<Appointment> findByAppointmentStatus(AppointmentStatus appointmentStatus);
-    List<Appointment> findByDateBetween(LocalDate start, LocalDate end);
+    List<Appointment> findByDateBetween(LocalDateTime start, LocalDateTime end);
 }
