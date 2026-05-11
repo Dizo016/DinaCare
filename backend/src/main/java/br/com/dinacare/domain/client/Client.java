@@ -27,4 +27,8 @@ public class Client {
     @Column
     private String notes;
 
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean active = true;
+
 }
