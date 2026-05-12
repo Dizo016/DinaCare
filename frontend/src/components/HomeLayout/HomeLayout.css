@@ -1,0 +1,49 @@
+/* ═══════════════════════════════════════════════
+   DinaCare — HomeLayout
+   ═══════════════════════════════════════════════ */
+
+.hl-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f5eff0;
+}
+
+.hl-body {
+  display: flex;
+  flex: 1;
+  position: relative;
+  /* empurra o conteúdo para baixo da Navbar (60px) */
+  margin-top: 60px;
+}
+
+.hl-main {
+  flex: 1;
+  padding: 32px 28px;
+  /* no desktop, deixa espaço para a sidebar (220px) */
+  margin-left: 220px;
+  min-height: calc(100vh - 60px);
+  transition: margin-left 0.3s ease;
+}
+
+/* overlay escuro por trás da sidebar no mobile */
+.hl-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(46, 42, 43, 0.45);
+  z-index: 90;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── responsividade ──────────────────────────── */
+@media (max-width: 768px) {
+  .hl-main {
+    margin-left: 0;
+    padding: 24px 16px;
+  }
+}

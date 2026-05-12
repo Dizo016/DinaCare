@@ -1,39 +1,76 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import PrivateRoute from './components/PrivateRoute/PrivateRoute'
+import HomeLayout from './components/HomeLayout/HomeLayout'
 import Login from './components/Login/Login'
 import Agendamento from './components/Agendamento/Agendamento'
 
-/**
- * Estrutura de rotas do DinaCare:
- *
- * /login                → Login (pública)
- * /agendar/:id          → Agendamento (pública — link da profissional)
- * /home                 → protegida por PrivateRoute (futuro: Dashboard)
- * /home/agendamentos    → protegida (futuro)
- * /home/profissionais   → protegida (futuro)
- * /home/clientes        → protegida (futuro)
- */
-function App() {
+// Placeholders — serão substituídos pelas telas reais
+function Dashboard() {
+  return (
+    <div style={{ fontFamily: 'DM Sans, sans-serif', color: '#2e2a2b' }}>
+      <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 24, marginBottom: 8 }}>
+        Dashboard
+      </h2>
+      <p style={{ color: '#6b6568', fontSize: 14 }}>Em construção...</p>
+    </div>
+  )
+}
+
+function Agendamentos() {
+  return (
+    <div style={{ fontFamily: 'DM Sans, sans-serif', color: '#2e2a2b' }}>
+      <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 24, marginBottom: 8 }}>
+        Agendamentos
+      </h2>
+      <p style={{ color: '#6b6568', fontSize: 14 }}>Em construção...</p>
+    </div>
+  )
+}
+
+function Profissionais() {
+  return (
+    <div style={{ fontFamily: 'DM Sans, sans-serif', color: '#2e2a2b' }}>
+      <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 24, marginBottom: 8 }}>
+        Profissionais
+      </h2>
+      <p style={{ color: '#6b6568', fontSize: 14 }}>Em construção...</p>
+    </div>
+  )
+}
+
+function Clientes() {
+  return (
+    <div style={{ fontFamily: 'DM Sans, sans-serif', color: '#2e2a2b' }}>
+      <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 24, marginBottom: 8 }}>
+        Clientes
+      </h2>
+      <p style={{ color: '#6b6568', fontSize: 14 }}>Em construção...</p>
+    </div>
+  )
+}
+
+export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
 
-          {/* Redireciona raiz para login */}
+          {/* Raiz → login */}
           <Route path="/" element={<Navigate to="/login" replace />} />
 
-          {/* Rotas públicas */}
+          {/* Públicas */}
           <Route path="/login" element={<Login />} />
           <Route path="/agendar/:profissionalId" element={<Agendamento />} />
 
-          {/* Rotas protegidas */}
+          {/* Protegidas — todas dentro do HomeLayout */}
           <Route element={<PrivateRoute />}>
-            <Route path="/home" element={
-              <div style={{ padding: 40, fontFamily: 'DM Sans, sans-serif' }}>
-                Dashboard — em construção
-              </div>
-            } />
+            <Route element={<HomeLayout />}>
+              <Route path="/home"                 element={<Dashboard />} />
+              <Route path="/home/agendamentos"    element={<Agendamentos />} />
+              <Route path="/home/profissionais"   element={<Profissionais />} />
+              <Route path="/home/clientes"        element={<Clientes />} />
+            </Route>
           </Route>
 
           {/* Fallback */}
@@ -44,5 +81,3 @@ function App() {
     </AuthProvider>
   )
 }
-
-export default App

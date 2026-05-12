@@ -1,0 +1,129 @@
+/* ═══════════════════════════════════════════════
+   DinaCare — Navbar
+   ═══════════════════════════════════════════════ */
+
+.nb-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #ffffff;
+  border-bottom: 1px solid #e8d8dc;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 100;
+  box-shadow: 0 1px 8px rgba(180, 90, 110, 0.07);
+}
+
+/* ── esquerda ────────────────────────────────── */
+.nb-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* hambúrguer — só aparece no mobile */
+.nb-menu-btn {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.nb-menu-btn span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #6b6568;
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+
+.nb-menu-btn:hover span { background: #c9748a; }
+
+/* marca */
+.nb-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.nb-brand-mark {
+  width: 32px;
+  height: 32px;
+  background: #c9748a;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.nb-brand-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: #2e2a2b;
+  letter-spacing: -0.3px;
+}
+
+/* ── direita ─────────────────────────────────── */
+.nb-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nb-user-name {
+  font-size: 14px;
+  color: #6b6568;
+  font-weight: 500;
+}
+
+.nb-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #f0dde3;
+  border: 2px solid #c9748a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #b5607a;
+}
+
+.nb-logout {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #bbb;
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border-radius: 8px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.nb-logout:hover {
+  color: #c9748a;
+  background: #f0dde3;
+}
+
+/* ── responsividade ──────────────────────────── */
+@media (max-width: 768px) {
+  .nb-menu-btn { display: flex; }
+  .nb-user-name { display: none; }
+  .nb-brand-name { font-size: 17px; }
+}
