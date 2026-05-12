@@ -1,0 +1,334 @@
+/* ═══════════════════════════════════════════════
+   DinaCare — Login
+   Layout: split screen (aside decorativo + form)
+   Paleta: rosa rosé consistente com Agendamento
+   ═══════════════════════════════════════════════ */
+
+/* ── variáveis (mesmas do Agendamento) ───────── */
+:root {
+  --rosa:        #c9748a;
+  --rosa-claro:  #f0dde3;
+  --rosa-hover:  #b5607a;
+  --rosa-escuro: #8b3f55;
+  --grafite:     #2e2a2b;
+  --cinza:       #6b6568;
+  --borda:       #e8d8dc;
+  --fundo:       #fdf8f8;
+  --branco:      #ffffff;
+}
+
+/* ── layout geral ─────────────────────────────── */
+.ln-page {
+  display: flex;
+  min-height: 100vh;
+  background: var(--fundo);
+}
+
+/* ── aside decorativo (esquerda) ──────────────── */
+.ln-aside {
+  position: relative;
+  width: 44%;
+  background: var(--grafite);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* textura de fundo — círculos rosa translúcidos */
+.ln-aside-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(201,116,138,0.35) 0%, transparent 55%),
+    radial-gradient(circle at 80% 75%, rgba(201,116,138,0.20) 0%, transparent 50%),
+    radial-gradient(circle at 55% 50%, rgba(255,255,255,0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.ln-aside-content {
+  position: relative;
+  z-index: 1;
+  padding: 48px 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ln-logo-mark {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: var(--rosa);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--branco);
+  box-shadow: 0 8px 24px rgba(201,116,138,0.45);
+  margin-bottom: 8px;
+}
+
+.ln-aside-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--branco);
+  line-height: 1.3;
+  max-width: 280px;
+}
+
+.ln-aside-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.65;
+  max-width: 280px;
+}
+
+.ln-aside-dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.ln-aside-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rosa);
+  opacity: 0.6;
+}
+
+.ln-aside-dots span:first-child { opacity: 1; width: 24px; border-radius: 4px; }
+
+/* ── painel principal (direita) ───────────────── */
+.ln-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.ln-form-wrapper {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  animation: fadeUp 0.4s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── marca no formulário ──────────────────────── */
+.ln-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ln-brand-mark {
+  width: 36px;
+  height: 36px;
+  background: var(--rosa);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--branco);
+}
+
+.ln-brand-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--grafite);
+  letter-spacing: -0.3px;
+}
+
+/* ── títulos ──────────────────────────────────── */
+.ln-heading h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--grafite);
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.ln-heading p {
+  font-size: 14px;
+  color: var(--cinza);
+}
+
+/* ── formulário ───────────────────────────────── */
+.ln-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ln-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.ln-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--grafite);
+}
+
+.ln-field input {
+  padding: 13px 16px;
+  border: 1.5px solid var(--borda);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: var(--grafite);
+  background: var(--fundo);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  width: 100%;
+}
+
+.ln-field input:focus {
+  border-color: var(--rosa);
+  box-shadow: 0 0 0 3px rgba(201,116,138,0.12);
+  background: var(--branco);
+}
+
+.ln-field input::placeholder { color: #c0b8ba; }
+
+/* ── campo de senha com botão mostrar ─────────── */
+.ln-pass-wrapper {
+  position: relative;
+}
+
+.ln-pass-wrapper input {
+  padding-right: 48px;
+}
+
+.ln-pass-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.ln-pass-toggle:hover { opacity: 1; }
+
+/* ── mensagem de erro ─────────────────────────── */
+.ln-error {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #fdf0f0;
+  border: 1px solid #f5c6c6;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #c0392b;
+  animation: shake 0.35s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
+/* ── botão principal ──────────────────────────── */
+.ln-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--rosa);
+  color: var(--branco);
+  border: none;
+  border-radius: 30px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(201,116,138,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  margin-top: 4px;
+}
+
+.ln-btn:hover:not(:disabled) {
+  background: var(--rosa-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(201,116,138,0.45);
+}
+
+.ln-btn:active:not(:disabled) { transform: scale(0.98); }
+
+.ln-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ── spinner dentro do botão ──────────────────── */
+.ln-btn-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: var(--branco);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── rodapé ───────────────────────────────────── */
+.ln-footer-text {
+  font-size: 12px;
+  color: #bbb;
+  text-align: center;
+}
+
+/* ── responsividade ───────────────────────────── */
+
+/* tablet — aside some, form ocupa tudo */
+@media (max-width: 768px) {
+  .ln-aside { display: none; }
+
+  .ln-main {
+    background: var(--fundo);
+    align-items: flex-start;
+    padding-top: 60px;
+  }
+
+  .ln-form-wrapper { max-width: 100%; }
+}
+
+/* mobile pequeno */
+@media (max-width: 400px) {
+  .ln-main { padding: 40px 20px; }
+}
