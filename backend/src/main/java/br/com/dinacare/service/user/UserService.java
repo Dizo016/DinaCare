@@ -10,6 +10,7 @@ import br.com.dinacare.repository.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,12 +22,14 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserResponse create(UserRequest request) {
         if (repository.existsByLogin(request.login())) {
             throw new IllegalArgumentException("Login already in use");
         }
-        return UserMapper.toResponse(repository.save(UserMapper.toEntity(request)));
+        String encodedPassword = passwordEncoder.encode(request.password());
+        return UserMapper.toResponse(repository.save(UserMapper.toEntity(request, encodedPassword)));
     }
 
     public List<UserResponse> findAll() {

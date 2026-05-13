@@ -2,11 +2,11 @@ package br.com.dinacare.domain.user;
 
 public class UserMapper {
 
-    public static User toEntity(UserRequest request) {
+    public static User toEntity(UserRequest request, String encodedPassword) {
         return User.builder()
                 .name(request.name())
                 .login(request.login())
-                .password(request.password())
+                .password(encodedPassword)
                 .userRole(request.userRole())
                 .entryTime(request.entryTime())
                 .exitTime(request.exitTime())
