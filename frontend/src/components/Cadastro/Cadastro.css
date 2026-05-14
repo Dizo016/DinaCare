@@ -1,0 +1,475 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@400;500&display=swap');
+
+:root {
+  --rosa:       #c9748a;
+  --rosa-claro: #f0dde3;
+  --rosa-hover: #b5607a;
+  --grafite:    #2e2a2b;
+  --cinza:      #6b6568;
+  --borda:      #e8d8dc;
+  --fundo:      #fdf8f8;
+  --branco:     #ffffff;
+  --verde-ok:   #4caf87;
+  --raio:       14px;
+  --sombra:     0 2px 16px rgba(180, 90, 110, 0.10);
+}
+
+/* ── página ──────────────────────────────────── */
+.cad-page {
+  max-width: 540px;
+  margin: 0 auto;
+  padding-bottom: 120px;
+}
+
+/* ── cabeçalho ───────────────────────────────── */
+.cad-header {
+  padding: 40px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cad-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.cad-brand-mark {
+  width: 36px;
+  height: 36px;
+  background: var(--rosa);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--branco);
+}
+
+.cad-brand-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--grafite);
+}
+
+.cad-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--grafite);
+  line-height: 1.2;
+}
+
+.cad-sub {
+  font-size: 14px;
+  color: var(--cinza);
+}
+
+/* ── progress steps ──────────────────────────── */
+.cad-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 24px 28px;
+}
+
+.cad-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  position: relative;
+}
+
+.cad-step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--borda);
+  background: var(--branco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cinza);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.cad-step.ativo .cad-step-dot {
+  border-color: var(--rosa);
+  background: var(--rosa);
+  color: var(--branco);
+  box-shadow: 0 0 0 4px rgba(201,116,138,0.15);
+}
+
+.cad-step.concluido .cad-step-dot {
+  border-color: var(--verde-ok);
+  background: var(--verde-ok);
+  color: var(--branco);
+}
+
+.cad-step-label {
+  font-size: 11px;
+  color: var(--cinza);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.cad-step.ativo .cad-step-label {
+  color: var(--rosa);
+}
+
+.cad-step-line {
+  flex: 1;
+  height: 2px;
+  background: var(--borda);
+  margin-bottom: 20px;
+  transition: background 0.3s ease;
+}
+
+.cad-step-line.concluida {
+  background: var(--verde-ok);
+}
+
+/* ── seção ───────────────────────────────────── */
+.cad-secao {
+  padding: 0 24px;
+  animation: fadeUp 0.3s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cad-secao-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--grafite);
+  margin-bottom: 4px;
+}
+
+.cad-secao-sub {
+  font-size: 13px;
+  color: var(--cinza);
+  margin-bottom: 20px;
+}
+
+/* ── campos ──────────────────────────────────── */
+.cad-campos {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cad-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cad-campo label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--grafite);
+}
+
+.cad-campo input {
+  padding: 13px 16px;
+  border: 1.5px solid var(--borda);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: var(--grafite);
+  background: var(--fundo);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.cad-campo input:focus {
+  border-color: var(--rosa);
+  box-shadow: 0 0 0 3px rgba(201,116,138,0.12);
+  background: var(--branco);
+}
+
+.cad-campo input::placeholder { color: #bbb; }
+
+.cad-campos-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ── role card ───────────────────────────────── */
+.cad-roles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.cad-role-card {
+  border: 1.5px solid var(--borda);
+  border-radius: var(--raio);
+  padding: 18px 16px;
+  background: var(--branco);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+.cad-role-card:hover {
+  border-color: var(--rosa);
+  transform: translateY(-1px);
+  box-shadow: var(--sombra);
+}
+
+.cad-role-card.selecionado {
+  border-color: var(--rosa);
+  background: #fdf0f3;
+  box-shadow: 0 0 0 3px rgba(201,116,138,0.14);
+}
+
+.cad-role-icon {
+  margin-bottom: 8px;
+  color: var(--rosa);
+}
+
+.cad-role-nome {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--grafite);
+}
+
+.cad-role-desc {
+  font-size: 12px;
+  color: var(--cinza);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.cad-role-check {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--branco);
+  background: var(--rosa);
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-top: 8px;
+}
+
+/* ── dias cards ──────────────────────────────── */
+.cad-dias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.cad-dia-btn {
+  padding: 10px 18px;
+  border: 1.5px solid var(--borda);
+  border-radius: 30px;
+  background: var(--branco);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--grafite);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cad-dia-btn:hover {
+  border-color: var(--rosa);
+  color: var(--rosa);
+}
+
+.cad-dia-btn.selecionado {
+  background: var(--rosa);
+  border-color: var(--rosa);
+  color: var(--branco);
+  box-shadow: 0 2px 10px rgba(201,116,138,0.35);
+}
+
+/* ── resumo card ─────────────────────────────── */
+.cad-resumo-card {
+  background: var(--fundo);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.cad-resumo-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--grafite);
+}
+
+.cad-resumo-label {
+  font-size: 13px;
+  color: var(--cinza);
+}
+
+.cad-resumo-valor {
+  font-weight: 500;
+  text-align: right;
+  max-width: 60%;
+}
+
+/* ── erro ────────────────────────────────────── */
+.cad-erro {
+  font-size: 13px;
+  color: #c0392b;
+  background: #fdf0f0;
+  border: 1px solid #f5c6c6;
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* ── footer fixo ─────────────────────────────── */
+.cad-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--branco);
+  border-top: 1px solid var(--borda);
+  padding: 14px 24px 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  z-index: 100;
+}
+
+.cad-btn-voltar {
+  padding: 14px 20px;
+  border: 1.5px solid var(--borda);
+  border-radius: 30px;
+  background: var(--branco);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--cinza);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.cad-btn-voltar:hover {
+  border-color: var(--rosa);
+  color: var(--rosa);
+}
+
+.cad-btn-avancar {
+  flex: 1;
+  max-width: 420px;
+  padding: 14px;
+  background: var(--rosa);
+  color: var(--branco);
+  border: none;
+  border-radius: 30px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(201,116,138,0.35);
+}
+
+.cad-btn-avancar:hover {
+  background: var(--rosa-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(201,116,138,0.45);
+}
+
+.cad-btn-avancar:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── tela de sucesso ─────────────────────────── */
+.cad-sucesso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  padding: 40px 24px;
+  gap: 12px;
+  animation: fadeUp 0.4s ease;
+}
+
+.cad-sucesso-icone {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--verde-ok);
+  color: white;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  box-shadow: 0 4px 20px rgba(76,175,135,0.35);
+}
+
+.cad-sucesso h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: var(--grafite);
+}
+
+.cad-sucesso p {
+  font-size: 15px;
+  color: var(--cinza);
+  line-height: 1.5;
+}
+
+.cad-sucesso-link {
+  margin-top: 8px;
+  padding: 14px 32px;
+  background: var(--rosa);
+  color: var(--branco);
+  border: none;
+  border-radius: 30px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(201,116,138,0.35);
+  transition: background 0.2s;
+}
+
+.cad-sucesso-link:hover { background: var(--rosa-hover); }
+
+/* ── responsividade ──────────────────────────── */
+@media (min-width: 541px) {
+  .cad-footer {
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 540px;
+    border-left: 1px solid var(--borda);
+    border-right: 1px solid var(--borda);
+    border-radius: 16px 16px 0 0;
+  }
+}

@@ -3,6 +3,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import PrivateRoute from './components/PrivateRoute/PrivateRoute'
 import HomeLayout from './components/HomeLayout/HomeLayout'
 import Login from './components/Login/Login'
+import Cadastro from './components/Cadastro/Cadastro'
 import Agendamento from './components/Agendamento/Agendamento'
 
 // Placeholders — serão substituídos pelas telas reais
@@ -61,6 +62,7 @@ export default function App() {
 
           {/* Públicas */}
           <Route path="/login" element={<Login />} />
+          <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/agendar/:profissionalId" element={<Agendamento />} />
 
           {/* Protegidas — todas dentro do HomeLayout */}

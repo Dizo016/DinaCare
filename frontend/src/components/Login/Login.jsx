@@ -74,7 +74,7 @@ export default function Login() {
               <input
                 id="ln-login"
                 type="text"
-                placeholder="seu.login"
+                placeholder="seu login"
                 value={loginValue}
                 onChange={(e) => { setLoginValue(e.target.value); setError('') }}
                 autoComplete="username"
@@ -135,6 +135,13 @@ export default function Login() {
                 : 'Entrar'
               }
             </button>
+
+             <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--cinza)' }}>
+              Não tem conta?{' '}
+              <a href="/cadastro" style={{ color: 'var(--rosa)', textDecoration: 'none', fontWeight: 500 }}>
+                Cadastre-se
+              </a>
+            </p>
 
           </form>
 
