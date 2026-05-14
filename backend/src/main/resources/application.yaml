@@ -22,6 +22,9 @@ spring:
       hibernate:
         format_sql: true
 
+  cors:
+    allowed-origins: http://localhost:5173
+
   jwt:
     secret: ${JWT_SECRET}
     expiration-hours: 8

@@ -11,36 +11,24 @@ export function AuthProvider({ children }) {
 
   const [token, setToken] = useState(() => localStorage.getItem('token') ?? null)
 
-  // ── login ────────────────────────────────────────────────────────────────
-  const login = useCallback(async (email, password) => {
-    // MOCK TEMPORÁRIO — remover quando API estiver pronta
-    if (email === 'dina@teste.com' && password === '123456') {
-      const fakeToken = 'fake-jwt-token'
-      const fakeUser  = { id: 1, name: 'Dina Oliveira', email }
+  const login = useCallback(async (login, password) => {
+    // 1. autentica e recebe o token
+    const { data } = await api.post('/auth/login', { login, password })
 
-      localStorage.setItem('token', fakeToken)
-      localStorage.setItem('user', JSON.stringify(fakeUser))
-      setToken(fakeToken)
-      setUser(fakeUser)
-      return fakeUser
-    }
+    localStorage.setItem('token', data.token)
+    setToken(data.token)
 
-    // Simula erro 401 para qualquer outra credencial
-    const err = new Error('Unauthorized')
-    err.response = { status: 401 }
-    throw err
+    // 2. busca os dados completos do usuário logado
+    const { data: userData } = await api.get('/auth/me', {
+      headers: { Authorization: `Bearer ${data.token}` },
+    })
 
-    // PRODUÇÃO — descomentar quando API estiver pronta:
-    // const { data } = await api.post('/auth/login', { email, password })
-    // const { token: newToken, user: newUser } = data
-    // localStorage.setItem('token', newToken)
-    // localStorage.setItem('user', JSON.stringify(newUser))
-    // setToken(newToken)
-    // setUser(newUser)
-    // return newUser
+    localStorage.setItem('user', JSON.stringify(userData))
+    setUser(userData)
+
+    return userData
   }, [])
 
-  // ── logout ───────────────────────────────────────────────────────────────
   const logout = useCallback(() => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
