@@ -4,6 +4,7 @@ import PrivateRoute from './components/PrivateRoute/PrivateRoute'
 import HomeLayout from './components/HomeLayout/HomeLayout'
 import Login from './components/Login/Login'
 import Cadastro from './components/Cadastro/Cadastro'
+import Procedimentos from './components/Procedimentos/Procedimentos'
 import Agendamento from './components/Agendamento/Agendamento'
 
 // Placeholders — serão substituídos pelas telas reais
@@ -69,6 +70,7 @@ export default function App() {
           <Route element={<PrivateRoute />}>
             <Route element={<HomeLayout />}>
               <Route path="/home"                 element={<Dashboard />} />
+              <Route path="/home/procedimentos" element={<Procedimentos />} />
               <Route path="/home/agendamentos"    element={<Agendamentos />} />
               <Route path="/home/profissionais"   element={<Profissionais />} />
               <Route path="/home/clientes"        element={<Clientes />} />

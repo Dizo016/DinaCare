@@ -2,19 +2,16 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import './Sidebar.css'
 
-/**
- * Sidebar — navegação lateral.
- *
- * Props:
- *   open     → booleano controlado pelo HomeLayout (mobile)
- *   onClose  → fecha a sidebar ao clicar num link (mobile)
- */
+const ROLE_LABEL = {
+  ADMIN: 'Administradora',
+  PROFESSIONAL: 'Profissional',
+}
 
 const NAV_ITEMS = [
   {
     label: 'Dashboard',
     path: '/home',
-    end: true,  // match exato — não ativa em sub-rotas
+    end: true,
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -62,6 +59,20 @@ const NAV_ITEMS = [
       </svg>
     ),
   },
+  {
+    label: 'Procedimentos',
+    path: '/home/procedimentos',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="10 9 9 9 8 9"/>
+      </svg>
+    ),
+  },
 ]
 
 export default function Sidebar({ open, onClose }) {
@@ -76,20 +87,20 @@ export default function Sidebar({ open, onClose }) {
   return (
     <aside className={`sb-aside ${open ? 'sb-open' : ''}`}>
 
-      {/* Perfil da profissional */}
       <div className="sb-profile">
         <div className="sb-avatar">
           {user?.name?.[0]?.toUpperCase() ?? 'D'}
         </div>
         <div className="sb-profile-info">
           <span className="sb-profile-name">{user?.name ?? 'Profissional'}</span>
-          <span className="sb-profile-role">Administradora</span>
+          <span className="sb-profile-role">
+            {ROLE_LABEL[user?.userRole] ?? 'Profissional'}
+          </span>
         </div>
       </div>
 
       <div className="sb-divider" />
 
-      {/* Navegação */}
       <nav className="sb-nav">
         <p className="sb-nav-label">Menu</p>
         {NAV_ITEMS.map((item) => (
@@ -108,7 +119,6 @@ export default function Sidebar({ open, onClose }) {
         ))}
       </nav>
 
-      {/* Logout na base */}
       <div className="sb-footer">
         <div className="sb-divider" />
         <button className="sb-logout" onClick={handleLogout}>
