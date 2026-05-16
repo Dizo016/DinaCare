@@ -64,15 +64,28 @@ export default function Agendamento() {
   useEffect(() => {
     async function carregar() {
       try {
-        const [profRes, procRes, horRes] = await Promise.all([
-          api.get(`/profissionais/${profissionalId}`),
-          api.get(`/profissionais/${profissionalId}/procedimentos`),
-          api.get(`/profissionais/${profissionalId}/horarios`),
+        // Profissional e procedimentos são independentes — busca em paralelo
+        const [profRes, procRes] = await Promise.all([
+          api.get(`/users/${profissionalId}`),
+          api.get(`/procedures/public/${profissionalId}`),
         ])
-        setProfissional(profRes.data)
+
+        // UserResponse usa campos em inglês
+        const u = profRes.data
+        setProfissional({
+          nome:         u.name,
+          especialidade: null,
+          foto:         null,
+          bio:          null,
+          endereco:     null,
+        })
         setProcedimentos(procRes.data)
-        setHorarios(horRes.data)
+
+        // Horários: endpoint ainda não existe — usa lista estática
+        setHorarios(MOCK.horarios)
+
       } catch {
+        // Só cai no mock completo se profissional ou procedimentos falharem
         setProfissional(MOCK.profissional)
         setProcedimentos(MOCK.procedimentos)
         setHorarios(MOCK.horarios)
@@ -136,7 +149,7 @@ export default function Agendamento() {
         <div className="ag-confirmado-icone">✓</div>
         <h2>Agendamento confirmado!</h2>
         <p>
-          <strong>{procedimentoSelecionado?.nome}</strong> com{' '}
+          <strong>{procedimentoSelecionado?.name ?? procedimentoSelecionado?.nome}</strong> com{' '}
           <strong>{profissional?.nome}</strong>
         </p>
         <p className="ag-confirmado-horario">às {horarioSelecionado}</p>
@@ -186,11 +199,11 @@ export default function Agendamento() {
               onClick={() => selecionarProcedimento(proc)}
             >
               <div className="ag-proc-topo">
-                <span className="ag-proc-nome">{proc.nome}</span>
-                <span className="ag-proc-preco">{formatarPreco(proc.preco)}</span>
+                <span className="ag-proc-nome">{proc.name ?? proc.nome}</span>
+                <span className="ag-proc-preco">{formatarPreco(proc.price ?? proc.preco)}</span>
               </div>
-              {proc.descricao && <p className="ag-proc-desc">{proc.descricao}</p>}
-              {proc.duracao   && <span className="ag-proc-duracao">⏱ {formatarDuracao(proc.duracao)}</span>}
+              {(proc.description ?? proc.descricao) && <p className="ag-proc-desc">{proc.description ?? proc.descricao}</p>}
+              {(proc.duration ?? proc.duracao) && <span className="ag-proc-duracao">⏱ {formatarDuracao(proc.duration ?? proc.duracao)}</span>}
               {procedimentoSelecionado?.id === proc.id && (
                 <span className="ag-proc-check">✓ Selecionado</span>
               )}
@@ -203,8 +216,8 @@ export default function Agendamento() {
         <section id="secao-horarios" className="ag-secao ag-secao-horarios">
           <h2 className="ag-secao-titulo">Horários disponíveis</h2>
           <p className="ag-secao-sub">
-            Para <strong>{procedimentoSelecionado.nome}</strong>
-            {procedimentoSelecionado.duracao && ` · ${formatarDuracao(procedimentoSelecionado.duracao)}`}
+            Para <strong>{procedimentoSelecionado.name ?? procedimentoSelecionado.nome}</strong>
+            {(procedimentoSelecionado.duration ?? procedimentoSelecionado.duracao) && ` · ${formatarDuracao(procedimentoSelecionado.duration ?? procedimentoSelecionado.duracao)}`}
           </p>
           <div className="ag-horarios">
             {horarios.map((h) => (
@@ -223,11 +236,11 @@ export default function Agendamento() {
       {procedimentoSelecionado && horarioSelecionado && (
         <div className="ag-footer">
           <div className="ag-resumo">
-            <span>{procedimentoSelecionado.nome}</span>
+            <span>{procedimentoSelecionado.name ?? procedimentoSelecionado.nome}</span>
             <span className="ag-resumo-sep">·</span>
             <span>{horarioSelecionado}</span>
             <span className="ag-resumo-sep">·</span>
-            <strong>{formatarPreco(procedimentoSelecionado.preco)}</strong>
+            <strong>{formatarPreco(procedimentoSelecionado.price ?? procedimentoSelecionado.preco)}</strong>
           </div>
           <button
             className="ag-btn-confirmar"
@@ -252,7 +265,7 @@ export default function Agendamento() {
             <div className="ag-modal-resumo">
               <div className="ag-modal-resumo-item">
                 <span className="ag-modal-resumo-label">Procedimento</span>
-                <span>{procedimentoSelecionado?.nome}</span>
+                <span>{procedimentoSelecionado?.name ?? procedimentoSelecionado?.nome}</span>
               </div>
               <div className="ag-modal-resumo-item">
                 <span className="ag-modal-resumo-label">Horário</span>
@@ -260,7 +273,7 @@ export default function Agendamento() {
               </div>
               <div className="ag-modal-resumo-item">
                 <span className="ag-modal-resumo-label">Valor</span>
-                <strong>{formatarPreco(procedimentoSelecionado?.preco)}</strong>
+                <strong>{formatarPreco(procedimentoSelecionado?.price ?? procedimentoSelecionado?.preco)}</strong>
               </div>
             </div>
 

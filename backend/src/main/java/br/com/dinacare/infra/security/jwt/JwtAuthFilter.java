@@ -36,7 +36,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             if (login != null) {
                 userRepository.findByLogin(login).ifPresent(user -> {
                     var auth = new UsernamePasswordAuthenticationToken(
-                            user,
+                            user.getLogin(), // <-- login como principal, não o objeto User
                             null,
                             List.of(new SimpleGrantedAuthority("ROLE_" + user.getUserRole().name()))
                     );

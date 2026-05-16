@@ -130,6 +130,56 @@
   white-space: nowrap;
 }
 
+/* ── card link de agendamento ────────────────── */
+.sb-link-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: #fdf0f3;
+  border: 1px solid #e8d8dc;
+  border-radius: 10px;
+  margin-top: 12px;
+}
+
+.sb-link-card-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #b5607a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.sb-link-card-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #c9748a;
+  border-radius: 8px;
+  color: #c9748a;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.sb-link-card-btn:hover {
+  background: #c9748a;
+  color: #ffffff;
+}
+
+.sb-link-card-btn--copiado {
+  background: #c9748a;
+  color: #ffffff;
+  border-color: #c9748a;
+}
+
 /* ── footer / logout ─────────────────────────── */
 .sb-footer {
   padding: 0 12px;
