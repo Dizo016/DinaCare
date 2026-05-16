@@ -1,0 +1,319 @@
+/* ═══════════════════════════════════════════════
+   DinaCare — Tela de Agendamentos
+   ═══════════════════════════════════════════════ */
+
+.ag-tela {
+  padding: 8px 0 40px;
+}
+
+.ag-tela-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.ag-tela-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #2e2a2b;
+  margin: 0;
+}
+
+.ag-tela-total {
+  font-size: 13px;
+  color: #6b6568;
+}
+
+/* ── loading ─────────────────────────────────── */
+.ag-tela-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 0;
+  color: #6b6568;
+  font-size: 14px;
+}
+
+.ag-tela-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid #f0dde3;
+  border-top-color: #c9748a;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── filtros ─────────────────────────────────── */
+.ag-tela-filtros {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.ag-tela-filtro-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #e8d8dc;
+  background: #ffffff;
+  color: #6b6568;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ag-tela-filtro-btn:hover {
+  border-color: #c9748a;
+  color: #c9748a;
+}
+
+.ag-tela-filtro-btn.ativo {
+  background: #c9748a;
+  border-color: #c9748a;
+  color: #ffffff;
+}
+
+/* ── vazio ───────────────────────────────────── */
+.ag-tela-vazio {
+  text-align: center;
+  padding: 48px 0;
+  color: #6b6568;
+  font-size: 14px;
+}
+
+/* ── lista ───────────────────────────────────── */
+.ag-tela-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── card ────────────────────────────────────── */
+.ag-card {
+  background: #ffffff;
+  border: 1px solid #e8d8dc;
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow 0.15s;
+}
+
+.ag-card:hover {
+  box-shadow: 0 2px 16px rgba(180, 90, 110, 0.10);
+}
+
+/* cabeçalho */
+.ag-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ag-card-cliente {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ag-card-nome {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2e2a2b;
+}
+
+.ag-card-tel {
+  font-size: 12px;
+  color: #6b6568;
+}
+
+.ag-card-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* procedimento */
+.ag-card-proc {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ag-card-proc-nome {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2e2a2b;
+}
+
+.ag-card-proc-dur {
+  font-size: 12px;
+  color: #c9748a;
+  background: #fdf0f3;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+/* datas */
+.ag-card-datas {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.ag-card-data-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ag-card-data-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #c9748a;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.ag-card-data-val {
+  font-size: 13px;
+  color: #2e2a2b;
+}
+
+/* preços */
+.ag-card-precos {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.ag-card-preco-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ag-card-preco-cobrado {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2e2a2b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.15s;
+}
+
+.ag-card-preco-cobrado:hover {
+  color: #c9748a;
+}
+
+.ag-card-preco-edit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ag-card-preco-edit input {
+  width: 90px;
+  padding: 4px 8px;
+  border: 1.5px solid #c9748a;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  outline: none;
+}
+
+.ag-card-preco-edit button {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  background: #f0dde3;
+  color: #b5607a;
+  transition: background 0.15s;
+}
+
+.ag-card-preco-edit button:first-of-type {
+  background: #c9748a;
+  color: #fff;
+}
+
+.ag-card-preco-edit button:hover {
+  opacity: 0.85;
+}
+
+/* pagamento */
+.ag-card-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ag-card-select {
+  padding: 4px 8px;
+  border: 1px solid #e8d8dc;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: #2e2a2b;
+  background: #ffffff;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.ag-card-select:focus {
+  border-color: #c9748a;
+}
+
+/* ações */
+.ag-card-acoes {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+  border-top: 1px solid #f0dde3;
+}
+
+.ag-card-btn {
+  padding: 7px 16px;
+  border-radius: 8px;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.ag-card-btn:hover { opacity: 0.85; }
+
+.ag-card-btn--confirmar {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.ag-card-btn--concluir {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.ag-card-btn--cancelar {
+  background: #fce4ec;
+  color: #c62828;
+}

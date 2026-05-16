@@ -1,10 +1,7 @@
 package br.com.dinacare.controller;
 
-import br.com.dinacare.domain.appointment.AppointmentRequest;
-import br.com.dinacare.domain.appointment.AppointmentResponse;
-import br.com.dinacare.domain.appointment.AppointmentStatus;
-import br.com.dinacare.domain.appointment.PaymentStatus;
-import br.com.dinacare.domain.appointment.PublicAppointmentRequest;
+import br.com.dinacare.domain.appointment.*;
+import br.com.dinacare.domain.client.ClientResponse;
 import br.com.dinacare.service.appointment.AppointmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,21 +22,11 @@ public class AppointmentController {
 
     private final AppointmentService appointmentService;
 
+    // ── autenticados ──────────────────────────────────────────────────────────
+
     @PostMapping
     public ResponseEntity<AppointmentResponse> create(@RequestBody @Valid AppointmentRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(appointmentService.create(request));
-    }
-
-    @PostMapping("/public")
-    public ResponseEntity<AppointmentResponse> createPublic(@RequestBody @Valid PublicAppointmentRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(appointmentService.createPublic(request));
-    }
-
-    @GetMapping("/public/{userId}/available-slots")
-    public ResponseEntity<List<LocalTime>> getAvailableSlots(
-            @PathVariable UUID userId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        return ResponseEntity.ok(appointmentService.getAvailableSlots(userId, date));
     }
 
     @GetMapping("/user/{userId}")
@@ -47,6 +34,21 @@ public class AppointmentController {
             @PathVariable UUID userId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return ResponseEntity.ok(appointmentService.findByUserAndDate(userId, date));
+    }
+
+    @GetMapping("/user/{userId}/all")
+    public ResponseEntity<List<AppointmentResponse>> findByUser(@PathVariable UUID userId) {
+        return ResponseEntity.ok(appointmentService.findByUser(userId));
+    }
+
+    @GetMapping("/user/{userId}/clients")
+    public ResponseEntity<List<ClientResponse>> findClientsByUser(@PathVariable UUID userId) {
+        return ResponseEntity.ok(appointmentService.findClientsByUser(userId));
+    }
+
+    @GetMapping("/user/{userId}/pending-count")
+    public ResponseEntity<Long> countPending(@PathVariable UUID userId) {
+        return ResponseEntity.ok(appointmentService.countPendingByUser(userId));
     }
 
     @GetMapping("/client/{clientId}")
@@ -68,9 +70,30 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.updatePayment(id, status));
     }
 
+    @PatchMapping("/{id}/charged-price")
+    public ResponseEntity<AppointmentResponse> updateChargedPrice(
+            @PathVariable UUID id,
+            @RequestBody @Valid UpdateChargedPriceRequest request) {
+        return ResponseEntity.ok(appointmentService.updateChargedPrice(id, request));
+    }
+
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<Void> cancel(@PathVariable UUID id) {
         appointmentService.cancel(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // ── públicos (sem autenticação) ───────────────────────────────────────────
+
+    @PostMapping("/public")
+    public ResponseEntity<AppointmentResponse> createPublic(@RequestBody @Valid PublicAppointmentRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(appointmentService.createPublic(request));
+    }
+
+    @GetMapping("/public/{userId}/available-slots")
+    public ResponseEntity<List<LocalTime>> getAvailableSlots(
+            @PathVariable UUID userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return ResponseEntity.ok(appointmentService.getAvailableSlots(userId, date));
     }
 }

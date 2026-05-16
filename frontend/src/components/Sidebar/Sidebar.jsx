@@ -26,6 +26,7 @@ const NAV_ITEMS = [
   {
     label: 'Agendamentos',
     path: '/home/agendamentos',
+    isAppointments: true,
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -77,7 +78,7 @@ const NAV_ITEMS = [
 ]
 
 export default function Sidebar({ open, onClose }) {
-  const { user, logout } = useAuth()
+  const { user, logout, pendingCount, hasUnread, markNotificationsRead } = useAuth()
   const navigate = useNavigate()
   const [copiado, setCopiado] = useState(false)
 
@@ -96,6 +97,11 @@ export default function Sidebar({ open, onClose }) {
   function handleLogout() {
     logout()
     navigate('/login', { replace: true })
+  }
+
+  function handleAppointmentsClick() {
+    if (hasUnread) markNotificationsRead()
+    onClose?.()
   }
 
   return (
@@ -122,20 +128,27 @@ export default function Sidebar({ open, onClose }) {
             key={item.path}
             to={item.path}
             end={item.end}
-            onClick={onClose}
+            onClick={item.isAppointments ? handleAppointmentsClick : onClose}
             className={({ isActive }) =>
-              `sb-link ${isActive ? 'sb-link-active' : ''}`
+              `sb-link ${isActive ? 'sb-link-active' : ''} ${item.isAppointments && pendingCount > 0 ? 'sb-link-pending' : ''}`
             }
           >
-            <span className="sb-link-icon">{item.icon}</span>
+            <span className="sb-link-icon">
+              {item.icon}
+              {item.isAppointments && hasUnread && (
+                <span className="sb-notif-dot" />
+              )}
+            </span>
             <span className="sb-link-label">{item.label}</span>
+            {item.isAppointments && pendingCount > 0 && (
+              <span className="sb-pending-badge">{pendingCount}</span>
+            )}
           </NavLink>
         ))}
       </nav>
 
       <div className="sb-footer">
         <div className="sb-divider" />
-
         <div className="sb-link-card">
           <p className="sb-link-card-label">Seu link de agendamento</p>
           <button className={`sb-link-card-btn ${copiado ? 'sb-link-card-btn--copiado' : ''}`} onClick={copiarLink}>
@@ -159,7 +172,6 @@ export default function Sidebar({ open, onClose }) {
             )}
           </button>
         </div>
-
         <div className="sb-divider" />
         <button className="sb-logout" onClick={handleLogout}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"

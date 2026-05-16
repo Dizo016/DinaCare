@@ -272,6 +272,26 @@
   color: inherit;
 }
 
+.ag-data-btn.indisponivel {
+  opacity: 0.4;
+  background: #fff0f0;
+  border-color: #e8c0c0;
+  cursor: not-allowed;
+  color: #c0392b;
+}
+
+.ag-data-btn.indisponivel:hover {
+  background: #fff0f0;
+  border-color: #e8c0c0;
+  color: #c0392b;
+}
+
+.ag-data-folga {
+  font-size: 8px;
+  color: #c0392b;
+  margin-top: 2px;
+}
+
 .ag-horarios {
   display: flex;
   flex-wrap: wrap;

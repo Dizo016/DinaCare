@@ -44,12 +44,15 @@ function proximosDias(quantidade) {
 
 const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
+const DAY_OF_WEEK_TO_WORKDAY = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY']
+
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function Agendamento() {
   const { profissionalId } = useParams()
 
   const [profissional, setProfissional]   = useState(null)
   const [procedimentos, setProcedimentos] = useState([])
+  const [workDays, setWorkDays]           = useState([])
   const [carregando, setCarregando]       = useState(true)
   const [erroCarregar, setErroCarregar]   = useState(false)
 
@@ -81,6 +84,7 @@ export default function Agendamento() {
         ])
         const u = profRes.data
         setProfissional({ nome: u.name, id: u.id })
+        setWorkDays(u.workDays ?? [])
         setProcedimentos(procRes.data)
       } catch {
         setErroCarregar(true)
@@ -244,17 +248,20 @@ export default function Agendamento() {
           <p className="ag-secao-sub">Próximos 14 dias</p>
           <div className="ag-datas">
             {dias.map((dia) => {
-              const dateObj  = new Date(dia + 'T00:00:00')
+              const dateObj   = new Date(dia + 'T00:00:00')
               const diaSemana = DIAS_SEMANA[dateObj.getDay()]
               const [, mes, d] = dia.split('-')
+              const folga = workDays.length > 0 && !workDays.includes(DAY_OF_WEEK_TO_WORKDAY[dateObj.getDay()])
               return (
                 <button
                   key={dia}
-                  className={`ag-data-btn ${dataSelecionada === dia ? 'selecionado' : ''}`}
-                  onClick={() => selecionarData(dia)}
+                  disabled={folga}
+                  className={`ag-data-btn ${dataSelecionada === dia ? 'selecionado' : ''} ${folga ? 'indisponivel' : ''}`}
+                  onClick={() => !folga && selecionarData(dia)}
                 >
                   <span className="ag-data-semana">{diaSemana}</span>
                   <span className="ag-data-dia">{d}/{mes}</span>
+                  {folga && <span className="ag-data-folga">●</span>}
                 </button>
               )
             })}

@@ -1,0 +1,150 @@
+/* ═══════════════════════════════════════════════
+   DinaCare — Tela de Clientes
+   ═══════════════════════════════════════════════ */
+
+.cl-tela {
+  padding: 8px 0 40px;
+}
+
+.cl-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.cl-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #2e2a2b;
+  margin: 0;
+}
+
+.cl-total {
+  font-size: 13px;
+  color: #6b6568;
+}
+
+.cl-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 0;
+  color: #6b6568;
+  font-size: 14px;
+}
+
+.cl-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid #f0dde3;
+  border-top-color: #c9748a;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.cl-busca {
+  width: 100%;
+  padding: 11px 16px;
+  border: 1.5px solid #e8d8dc;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: #2e2a2b;
+  background: #ffffff;
+  outline: none;
+  margin-bottom: 20px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.cl-busca:focus {
+  border-color: #c9748a;
+  box-shadow: 0 0 0 3px rgba(201, 116, 138, 0.12);
+}
+
+.cl-vazio {
+  text-align: center;
+  padding: 48px 0;
+  color: #6b6568;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.cl-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cl-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: #ffffff;
+  border: 1px solid #e8d8dc;
+  border-radius: 14px;
+  padding: 16px;
+  transition: box-shadow 0.15s;
+}
+
+.cl-card:hover {
+  box-shadow: 0 2px 16px rgba(180, 90, 110, 0.10);
+}
+
+.cl-card-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #f0dde3;
+  border: 2px solid #c9748a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: #b5607a;
+  flex-shrink: 0;
+}
+
+.cl-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cl-card-nome {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2e2a2b;
+}
+
+.cl-card-tel {
+  font-size: 13px;
+  color: #6b6568;
+}
+
+.cl-card-ultimo {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cl-card-ultimo-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #c9748a;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.cl-card-ultimo-val {
+  font-size: 12px;
+  color: #6b6568;
+}

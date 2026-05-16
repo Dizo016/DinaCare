@@ -4,7 +4,7 @@
 
 .sb-aside {
   position: fixed;
-  top: 60px;              /* abaixo da Navbar */
+  top: 60px;
   left: 0;
   width: 220px;
   height: calc(100vh - 60px);
@@ -102,6 +102,7 @@
   font-size: 14px;
   font-weight: 500;
   transition: background 0.15s, color 0.15s;
+  position: relative;
 }
 
 .sb-link:hover {
@@ -124,10 +125,65 @@
   flex-shrink: 0;
   color: inherit;
   transition: color 0.15s;
+  position: relative;
 }
 
 .sb-link-label {
   white-space: nowrap;
+  flex: 1;
+}
+
+/* ── item de agendamentos com pendentes ──────── */
+.sb-link-pending {
+  background: #fff8f0;
+  color: #c47a2a;
+  font-weight: 600;
+}
+
+.sb-link-pending:hover {
+  background: #ffeedd;
+  color: #b56820;
+}
+
+.sb-link-pending.sb-link-active {
+  background: #fde8cc;
+  color: #b56820;
+}
+
+/* ── bolinha vermelha de notificação ─────────── */
+.sb-notif-dot {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 8px;
+  height: 8px;
+  background: #e53935;
+  border-radius: 50%;
+  border: 1.5px solid #ffffff;
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.3); opacity: 0.8; }
+}
+
+/* ── badge com contagem ──────────────────────── */
+.sb-pending-badge {
+  margin-left: auto;
+  background: #c9748a;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 3px 7px;
+  border-radius: 20px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.sb-link-pending .sb-pending-badge {
+  background: #c47a2a;
 }
 
 /* ── card link de agendamento ────────────────── */
@@ -213,13 +269,11 @@
 
 /* ── responsividade ──────────────────────────── */
 @media (max-width: 768px) {
-  /* no mobile, sidebar começa fora da tela */
   .sb-aside {
     transform: translateX(-100%);
     box-shadow: none;
   }
 
-  /* quando open=true, desliza para dentro */
   .sb-aside.sb-open {
     transform: translateX(0);
     box-shadow: 4px 0 24px rgba(180, 90, 110, 0.12);

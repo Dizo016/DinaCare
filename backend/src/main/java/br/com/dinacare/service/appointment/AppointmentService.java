@@ -2,6 +2,8 @@ package br.com.dinacare.service.appointment;
 
 import br.com.dinacare.domain.appointment.*;
 import br.com.dinacare.domain.client.Client;
+import br.com.dinacare.domain.client.ClientMapper;
+import br.com.dinacare.domain.client.ClientResponse;
 import br.com.dinacare.domain.procedure.Procedure;
 import br.com.dinacare.domain.user.User;
 import br.com.dinacare.domain.user.WorkDays;
@@ -39,9 +41,7 @@ public class AppointmentService {
                 .orElseThrow(() -> new EntityNotFoundException("Client not found"));
         Procedure procedure = procedureRepository.findById(request.procedureId())
                 .orElseThrow(() -> new EntityNotFoundException("Procedure not found"));
-
         validateSchedule(user, request.startTime(), procedure);
-
         Appointment appointment = AppointmentMapper.toEntity(request, user, client, procedure);
         return AppointmentMapper.toResponse(appointmentRepository.save(appointment));
     }
@@ -49,11 +49,8 @@ public class AppointmentService {
     public AppointmentResponse createPublic(PublicAppointmentRequest request) {
         User user = userRepository.findById(request.profissionalId())
                 .orElseThrow(() -> new EntityNotFoundException("Profissional not found"));
-
         Procedure procedure = procedureRepository.findById(request.procedureId())
                 .orElseThrow(() -> new EntityNotFoundException("Procedure not found"));
-
-        // Busca cliente pelo telefone ou cria um novo
         Client client = clientRepository.findByPhone(request.clientPhone())
                 .orElseGet(() -> clientRepository.save(
                         Client.builder()
@@ -61,9 +58,7 @@ public class AppointmentService {
                                 .phone(request.clientPhone())
                                 .build()
                 ));
-
         validateSchedule(user, request.startTime(), procedure);
-
         Appointment appointment = Appointment.builder()
                 .user(user)
                 .client(client)
@@ -75,53 +70,37 @@ public class AppointmentService {
                 .appointmentStatus(AppointmentStatus.SCHEDULED)
                 .paymentStatus(PaymentStatus.PENDING)
                 .build();
-
         return AppointmentMapper.toResponse(appointmentRepository.save(appointment));
     }
 
     public List<LocalTime> getAvailableSlots(UUID userId, LocalDate date) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-        // Verifica se a profissional trabalha nesse dia da semana
         WorkDays workDay = toWorkDay(date.getDayOfWeek());
-        if (!user.getWorkDays().contains(workDay)) {
-            return List.of();
-        }
+        if (!user.getWorkDays().contains(workDay)) return List.of();
 
-        // Busca agendamentos já existentes no dia
         List<Appointment> existing = appointmentRepository
                 .findByUserAndStartTimeBetween(user, date.atStartOfDay(), date.atTime(LocalTime.MAX));
 
-        // Gera todos os slots de 30 em 30 minutos dentro do horário de trabalho
         List<LocalTime> slots = new ArrayList<>();
         LocalTime cursor = user.getEntryTime();
         LocalTime end    = user.getExitTime();
 
         while (!cursor.isAfter(end.minusMinutes(30))) {
-            // Pula horário de almoço
             if (user.getLunchStartTime() != null && user.getLunchEndTime() != null) {
                 if (!cursor.isBefore(user.getLunchStartTime()) && cursor.isBefore(user.getLunchEndTime())) {
                     cursor = cursor.plusMinutes(30);
                     continue;
                 }
             }
-
-            // Verifica se algum agendamento existente ocupa esse slot
             LocalDateTime slotStart = date.atTime(cursor);
             LocalDateTime slotEnd   = slotStart.plusMinutes(30);
-
             boolean ocupado = existing.stream()
                     .filter(a -> a.getAppointmentStatus() != AppointmentStatus.CANCELED)
                     .anyMatch(a -> a.getStartTime().isBefore(slotEnd) && a.getEndTime().isAfter(slotStart));
-
-            if (!ocupado) {
-                slots.add(cursor);
-            }
-
+            if (!ocupado) slots.add(cursor);
             cursor = cursor.plusMinutes(30);
         }
-
         return slots;
     }
 
@@ -130,18 +109,36 @@ public class AppointmentService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         return appointmentRepository
                 .findByUserAndStartTimeBetween(user, date.atStartOfDay(), date.atTime(LocalTime.MAX))
-                .stream()
-                .map(AppointmentMapper::toResponse)
-                .toList();
+                .stream().map(AppointmentMapper::toResponse).toList();
+    }
+
+    public List<AppointmentResponse> findByUser(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        return appointmentRepository.findByUser(user)
+                .stream().map(AppointmentMapper::toResponse).toList();
     }
 
     public List<AppointmentResponse> findByClient(UUID clientId) {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new EntityNotFoundException("Client not found"));
         return appointmentRepository.findByClient(client)
-                .stream()
-                .map(AppointmentMapper::toResponse)
-                .toList();
+                .stream().map(AppointmentMapper::toResponse).toList();
+    }
+
+    public List<ClientResponse> findClientsByUser(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        return appointmentRepository.findDistinctClientsByUser(user)
+                .stream().map(ClientMapper::toResponse).toList();
+    }
+
+    public long countPendingByUser(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        return appointmentRepository.countByUserAndAppointmentStatusNotAndStartTimeAfter(
+                user, AppointmentStatus.CANCELED, LocalDateTime.now()
+        );
     }
 
     public AppointmentResponse updateStatus(UUID id, AppointmentStatus status) {
@@ -156,6 +153,12 @@ public class AppointmentService {
         return AppointmentMapper.toResponse(appointmentRepository.save(appointment));
     }
 
+    public AppointmentResponse updateChargedPrice(UUID id, UpdateChargedPriceRequest request) {
+        Appointment appointment = getById(id);
+        appointment.setChargedPrice(request.chargedPrice());
+        return AppointmentMapper.toResponse(appointmentRepository.save(appointment));
+    }
+
     public void cancel(UUID id) {
         Appointment appointment = getById(id);
         appointment.setAppointmentStatus(AppointmentStatus.CANCELED);
@@ -164,14 +167,8 @@ public class AppointmentService {
 
     private void validateSchedule(User user, LocalDateTime startTime, Procedure procedure) {
         LocalDateTime end = startTime.plusMinutes(procedure.getDuration());
-
-        boolean conflict = !appointmentRepository
-                .findConflictingAppointments(user, startTime, end)
-                .isEmpty();
-
-        if (conflict) {
-            throw new IllegalStateException("User already has an appointment in this time slot");
-        }
+        boolean conflict = !appointmentRepository.findConflictingAppointments(user, startTime, end).isEmpty();
+        if (conflict) throw new IllegalStateException("User already has an appointment in this time slot");
     }
 
     private WorkDays toWorkDay(DayOfWeek day) {

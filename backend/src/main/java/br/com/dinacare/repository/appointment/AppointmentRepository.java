@@ -31,8 +31,20 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     );
 
     List<Appointment> findByUserAndStartTimeBetween(User user, LocalDateTime start, LocalDateTime end);
+    List<Appointment> findByUser(User user);
     List<Appointment> findByClient(Client client);
     List<Appointment> findByPaymentStatus(PaymentStatus paymentStatus);
     List<Appointment> findByAppointmentStatus(AppointmentStatus appointmentStatus);
     List<Appointment> findByStartTimeBetween(LocalDateTime start, LocalDateTime end);
+
+    // Conta agendamentos futuros não cancelados — usado para notificação
+    long countByUserAndAppointmentStatusNotAndStartTimeAfter(
+            User user,
+            AppointmentStatus status,
+            LocalDateTime after
+    );
+
+    // Clientes únicos que agendaram com essa profissional
+    @Query("SELECT DISTINCT a.client FROM Appointment a WHERE a.user = :user AND a.client.active = true")
+    List<Client> findDistinctClientsByUser(@Param("user") User user);
 }
