@@ -1,8 +1,7 @@
 package br.com.dinacare.controller;
 
 import br.com.dinacare.domain.appointment.*;
-import br.com.dinacare.domain.client.ClientResponse;
-import br.com.dinacare.service.appointment.AppointmentService;
+import br.com.dinacare.domain.client.ClientResponse;import br.com.dinacare.service.appointment.AppointmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -81,6 +80,19 @@ public class AppointmentController {
     public ResponseEntity<Void> cancel(@PathVariable UUID id) {
         appointmentService.cancel(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/user/{userId}/revenue")
+    public ResponseEntity<RevenueResponse> getRevenue(
+            @PathVariable UUID userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        return ResponseEntity.ok(appointmentService.getRevenue(userId, from, to));
+    }
+
+    @GetMapping("/user/{userId}/dashboard")
+    public ResponseEntity<DashboardResponse> getDashboard(@PathVariable UUID userId) {
+        return ResponseEntity.ok(appointmentService.getDashboard(userId));
     }
 
     // ── públicos (sem autenticação) ───────────────────────────────────────────

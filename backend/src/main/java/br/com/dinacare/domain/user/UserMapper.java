@@ -13,6 +13,9 @@ public class UserMapper {
                 .lunchStartTime(request.lunchStartTime())
                 .lunchEndTime(request.lunchEndTime())
                 .workDays(request.workDays())
+                .especialidade(request.especialidade())
+                .bio(request.bio())
+                .endereco(request.endereco())
                 .build();
     }
 
@@ -27,6 +30,9 @@ public class UserMapper {
                 user.getLunchStartTime(),
                 user.getLunchEndTime(),
                 user.getWorkDays(),
+                user.getEspecialidade(),
+                user.getBio(),
+                user.getEndereco(),
                 user.getActive()
         );
     }

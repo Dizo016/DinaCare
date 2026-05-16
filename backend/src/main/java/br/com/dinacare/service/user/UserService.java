@@ -1,11 +1,6 @@
 package br.com.dinacare.service.user;
 
-import br.com.dinacare.domain.user.User;
-import br.com.dinacare.domain.user.UserMapper;
-import br.com.dinacare.domain.user.UserRequest;
-import br.com.dinacare.domain.user.UserResponse;
-import br.com.dinacare.domain.user.UserRole;
-import br.com.dinacare.domain.user.WorkDays;
+import br.com.dinacare.domain.user.*;
 import br.com.dinacare.repository.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -43,6 +38,12 @@ public class UserService {
         return UserMapper.toResponse(getById(id));
     }
 
+    public UserResponse findByLogin(String login) {
+        return repository.findByLogin(login)
+                .map(UserMapper::toResponse)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
+
     public List<UserResponse> findByRole(UserRole role) {
         return repository.findByActiveTrueAndUserRole(role)
                 .stream()
@@ -67,6 +68,17 @@ public class UserService {
         existing.setLunchStartTime(request.lunchStartTime());
         existing.setLunchEndTime(request.lunchEndTime());
         existing.setWorkDays(request.workDays());
+        existing.setEspecialidade(request.especialidade());
+        existing.setBio(request.bio());
+        existing.setEndereco(request.endereco());
+        return UserMapper.toResponse(repository.save(existing));
+    }
+
+    public UserResponse updateProfile(UUID id, UpdateProfileRequest request) {
+        User existing = getById(id);
+        existing.setEspecialidade(request.especialidade());
+        existing.setBio(request.bio());
+        existing.setEndereco(request.endereco());
         return UserMapper.toResponse(repository.save(existing));
     }
 

@@ -1,5 +1,6 @@
 package br.com.dinacare.controller;
 
+import br.com.dinacare.domain.user.UpdateProfileRequest;
 import br.com.dinacare.domain.user.UserRequest;
 import br.com.dinacare.domain.user.UserResponse;
 import br.com.dinacare.domain.user.UserRole;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,6 +53,18 @@ public class UserController {
             @PathVariable UUID id,
             @RequestBody @Valid UserRequest request) {
         return ResponseEntity.ok(userService.update(id, request));
+    }
+
+    @PatchMapping("/{id}/profile")
+    public ResponseEntity<UserResponse> updateProfile(
+            @PathVariable UUID id,
+            @RequestBody UpdateProfileRequest request,
+            Principal principal) {
+        UserResponse owner = userService.findByLogin(principal.getName());
+        if (!owner.id().equals(id)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(userService.updateProfile(id, request));
     }
 
     @DeleteMapping("/{id}")

@@ -16,13 +16,19 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import br.com.dinacare.domain.appointment.RevenueResponse.DailyRevenue;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -163,6 +169,140 @@ public class AppointmentService {
         Appointment appointment = getById(id);
         appointment.setAppointmentStatus(AppointmentStatus.CANCELED);
         appointmentRepository.save(appointment);
+    }
+
+    public RevenueResponse getRevenue(UUID userId, LocalDate from, LocalDate to) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        List<Appointment> paidAndCompleted = appointmentRepository
+                .findByUserAndStartTimeBetween(user, from.atStartOfDay(), to.atTime(LocalTime.MAX))
+                .stream()
+                .filter(a -> a.getPaymentStatus() == PaymentStatus.PAID
+                        && a.getAppointmentStatus() == AppointmentStatus.COMPLETED)
+                .toList();
+
+        BigDecimal total = paidAndCompleted.stream()
+                .map(Appointment::getChargedPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        int count = paidAndCompleted.size();
+
+        BigDecimal ticketMedio = count == 0 ? BigDecimal.ZERO
+                : total.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP);
+
+        // agrupa por dia
+        Map<LocalDate, List<Appointment>> porDia = paidAndCompleted.stream()
+                .collect(Collectors.groupingBy(a -> a.getStartTime().toLocalDate()));
+
+        List<DailyRevenue> dailyList = porDia.entrySet().stream()
+                .map(e -> {
+                    BigDecimal dayTotal = e.getValue().stream()
+                            .map(Appointment::getChargedPrice)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    return new DailyRevenue(e.getKey(), dayTotal, e.getValue().size());
+                })
+                .sorted(Comparator.comparing(DailyRevenue::date))
+                .toList();
+
+        return new RevenueResponse(total, count, ticketMedio, dailyList);
+    }
+
+    public DashboardResponse getDashboard(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        LocalDate hoje = LocalDate.now();
+        LocalDate inicioMes = hoje.withDayOfMonth(1);
+
+        List<Appointment> todos = appointmentRepository.findByUser(user);
+
+        // Agendamentos de hoje
+        long agendamentosHoje = todos.stream()
+                .filter(a -> a.getStartTime().toLocalDate().equals(hoje)
+                        && a.getAppointmentStatus() != AppointmentStatus.CANCELED)
+                .count();
+
+        // Receita do mês (PAID + COMPLETED)
+        BigDecimal receitaMes = todos.stream()
+                .filter(a -> a.getPaymentStatus() == PaymentStatus.PAID
+                        && a.getAppointmentStatus() == AppointmentStatus.COMPLETED
+                        && !a.getStartTime().toLocalDate().isBefore(inicioMes))
+                .map(Appointment::getChargedPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Total de clientes únicos
+        long totalClientes = appointmentRepository.findDistinctClientsByUser(user).size();
+
+        // Taxa de conclusão
+        long totalNaoCancelados = todos.stream()
+                .filter(a -> a.getAppointmentStatus() != AppointmentStatus.CANCELED).count();
+        long totalConcluidos = todos.stream()
+                .filter(a -> a.getAppointmentStatus() == AppointmentStatus.COMPLETED).count();
+        double taxaConclusao = totalNaoCancelados == 0 ? 0
+                : (double) totalConcluidos / totalNaoCancelados * 100;
+
+        // Receita dos últimos 6 meses
+        List<DashboardResponse.MonthlyRevenue> ultimos6Meses = new java.util.ArrayList<>();
+        for (int i = 5; i >= 0; i--) {
+            LocalDate inicio = hoje.minusMonths(i).withDayOfMonth(1);
+            LocalDate fim    = inicio.withDayOfMonth(inicio.lengthOfMonth());
+            BigDecimal receita = todos.stream()
+                    .filter(a -> a.getPaymentStatus() == PaymentStatus.PAID
+                            && a.getAppointmentStatus() == AppointmentStatus.COMPLETED
+                            && !a.getStartTime().toLocalDate().isBefore(inicio)
+                            && !a.getStartTime().toLocalDate().isAfter(fim))
+                    .map(Appointment::getChargedPrice)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            ultimos6Meses.add(new DashboardResponse.MonthlyRevenue(inicio.getMonth().toString(), inicio.getYear(), receita));
+        }
+
+        // Procedimento mais vendido
+        String procMaisVendido = todos.stream()
+                .filter(a -> a.getAppointmentStatus() != AppointmentStatus.CANCELED)
+                .collect(Collectors.groupingBy(a -> a.getProcedure().getName(), Collectors.counting()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+
+        // Cliente mais fiel
+        String clienteMaisFiel = todos.stream()
+                .filter(a -> a.getAppointmentStatus() != AppointmentStatus.CANCELED)
+                .collect(Collectors.groupingBy(a -> a.getClient().getName(), Collectors.counting()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(e -> e.getKey() + " (" + e.getValue() + " agendamentos)")
+                .orElse(null);
+
+        // Melhor dia (maior receita em um único dia)
+        String melhorDia = todos.stream()
+                .filter(a -> a.getPaymentStatus() == PaymentStatus.PAID
+                        && a.getAppointmentStatus() == AppointmentStatus.COMPLETED)
+                .collect(Collectors.groupingBy(
+                        a -> a.getStartTime().toLocalDate(),
+                        Collectors.mapping(Appointment::getChargedPrice,
+                                Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))
+                ))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(e -> e.getKey().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                        + " — R$ " + e.getValue().setScale(2, RoundingMode.HALF_UP))
+                .orElse(null);
+
+        // Próximos agendamentos do dia
+        List<AppointmentResponse> proximosHoje = todos.stream()
+                .filter(a -> a.getStartTime().toLocalDate().equals(hoje)
+                        && a.getAppointmentStatus() != AppointmentStatus.CANCELED
+                        && a.getStartTime().isAfter(LocalDateTime.now()))
+                .sorted(Comparator.comparing(Appointment::getStartTime))
+                .map(AppointmentMapper::toResponse)
+                .toList();
+
+        return new DashboardResponse(
+                agendamentosHoje, receitaMes, totalClientes, taxaConclusao,
+                ultimos6Meses, procMaisVendido, clienteMaisFiel, melhorDia, proximosHoje
+        );
     }
 
     private void validateSchedule(User user, LocalDateTime startTime, Procedure procedure) {

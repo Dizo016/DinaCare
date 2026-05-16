@@ -15,5 +15,8 @@ public record UserRequest(
         @NotNull LocalTime exitTime,
         LocalTime lunchStartTime,
         LocalTime lunchEndTime,
-        @NotNull Set<WorkDays> workDays
+        @NotNull Set<WorkDays> workDays,
+        String especialidade,
+        String bio,
+        String endereco
 ) {}

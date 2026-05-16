@@ -14,5 +14,8 @@ public record UserResponse(
         LocalTime lunchStartTime,
         LocalTime lunchEndTime,
         Set<WorkDays> workDays,
+        String especialidade,
+        String bio,
+        String endereco,
         Boolean active
 ) {}

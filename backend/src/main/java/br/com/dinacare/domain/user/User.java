@@ -54,6 +54,15 @@ public class User {
     @Column(name = "work_days", nullable = false)
     private Set<WorkDays> workDays;
 
+    @Column
+    private String especialidade;
+
+    @Column(columnDefinition = "TEXT")
+    private String bio;
+
+    @Column
+    private String endereco;
+
     @Builder.Default
     @Column(nullable = false)
     private Boolean active = true;
