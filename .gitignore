@@ -33,3 +33,4 @@ build/
 .vscode/
 .env
 backend/.env
+frontend/.env
