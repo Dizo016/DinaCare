@@ -1,0 +1,228 @@
+/* ═══════════════════════════════════════════════
+   DinaCare — Tela de Perfil
+   ═══════════════════════════════════════════════ */
+
+.perfil-tela {
+  padding: 8px 0 40px;
+}
+
+.perfil-header {
+  margin-bottom: 24px;
+}
+
+.perfil-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #2e2a2b;
+  margin: 0 0 4px;
+}
+
+.perfil-sub {
+  font-size: 13px;
+  color: #6b6568;
+  margin: 0;
+}
+
+/* ── banner de perfil incompleto ─────────────── */
+.perfil-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: linear-gradient(135deg, #fff8e7 0%, #fff3d6 100%);
+  border: 1.5px solid #f5d87a;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 24px;
+  animation: fadeSlide 0.4s ease;
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.perfil-banner-icone {
+  font-size: 24px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.perfil-banner-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.perfil-banner-texto strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: #7a5500;
+}
+
+.perfil-banner-texto span {
+  font-size: 13px;
+  color: #8a6510;
+  line-height: 1.5;
+}
+
+/* ── card somente leitura ────────────────────── */
+.perfil-card--readonly {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid #e8d8dc;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+}
+
+.perfil-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #f0dde3;
+  border: 2px solid #c9748a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #b5607a;
+  flex-shrink: 0;
+}
+
+.perfil-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.perfil-nome {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2e2a2b;
+}
+
+.perfil-login {
+  font-size: 13px;
+  color: #6b6568;
+}
+
+/* ── formulário ──────────────────────────────── */
+.perfil-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.perfil-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.perfil-campo label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2e2a2b;
+}
+
+.perfil-campo input,
+.perfil-campo textarea {
+  padding: 12px 16px;
+  border: 1.5px solid #e8d8dc;
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: #2e2a2b;
+  background: #fdf8f8;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  resize: vertical;
+}
+
+.perfil-campo input:focus,
+.perfil-campo textarea:focus {
+  border-color: #c9748a;
+  box-shadow: 0 0 0 3px rgba(201, 116, 138, 0.12);
+  background: #ffffff;
+}
+
+.perfil-campo input::placeholder,
+.perfil-campo textarea::placeholder {
+  color: #c0b0b5;
+}
+
+.perfil-hint {
+  font-size: 12px;
+  color: #6b6568;
+}
+
+/* ── feedback ────────────────────────────────── */
+.perfil-erro {
+  font-size: 13px;
+  color: #c0392b;
+  background: #fce4e4;
+  border: 1px solid #f0c0c0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin: 0;
+}
+
+.perfil-sucesso {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2e7d32;
+  background: #e8f5e9;
+  border: 1px solid #a5d6a7;
+  border-radius: 10px;
+  padding: 10px 14px;
+  animation: fadeSlide 0.3s ease;
+}
+
+/* ── botão ───────────────────────────────────── */
+.perfil-btn {
+  padding: 14px;
+  background: linear-gradient(135deg, #c9748a 0%, #b5607a 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(201, 116, 138, 0.35);
+  letter-spacing: 0.2px;
+  align-self: flex-start;
+  min-width: 160px;
+}
+
+.perfil-btn:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(201, 116, 138, 0.45);
+}
+
+.perfil-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── limita largura do conteúdo no desktop ───── */
+@media (min-width: 769px) {
+  .perfil-banner,
+  .perfil-card--readonly,
+  .perfil-form,
+  .perfil-header {
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

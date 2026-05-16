@@ -37,7 +37,14 @@ export function AuthProvider({ children }) {
     setHasUnread(false)
   }, [])
 
-  // Busca contagem de agendamentos pendentes e controla bolinha
+  const refreshUser = useCallback(async () => {
+    try {
+      const { data: userData } = await api.get('/auth/me')
+      localStorage.setItem('user', JSON.stringify(userData))
+      setUser(userData)
+      return userData
+    } catch { /* silencioso */ }
+  }, [])
   const refreshPendingCount = useCallback(async (userId) => {
     try {
       const { data } = await api.get(`/appointments/user/${userId}/pending-count`)
@@ -72,6 +79,7 @@ export function AuthProvider({ children }) {
       user, token, isAuthenticated,
       pendingCount, hasUnread,
       login, logout,
+      refreshUser,
       refreshPendingCount, markNotificationsRead,
     }}>
       {children}

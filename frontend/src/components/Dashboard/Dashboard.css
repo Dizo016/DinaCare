@@ -1,0 +1,279 @@
+/* ═══════════════════════════════════════════════
+   DinaCare — Dashboard
+   ═══════════════════════════════════════════════ */
+
+.dash-tela {
+  padding: 8px 0 40px;
+}
+
+.dash-header {
+  margin-bottom: 24px;
+}
+
+.dash-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: #2e2a2b;
+  margin: 0 0 4px;
+}
+
+.dash-sub {
+  font-size: 14px;
+  color: #6b6568;
+  margin: 0;
+}
+
+/* ── loading ─────────────────────────────────── */
+.dash-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 0;
+  color: #6b6568;
+  font-size: 14px;
+}
+
+.dash-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid #f0dde3;
+  border-top-color: #c9748a;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── banner perfil incompleto ────────────────── */
+.dash-banner-perfil {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, #fff8e7 0%, #fff3d6 100%);
+  border: 1.5px solid #f5d87a;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 24px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.15s;
+  animation: fadeSlide 0.4s ease;
+}
+
+.dash-banner-perfil:hover {
+  box-shadow: 0 4px 16px rgba(245, 180, 50, 0.2);
+  transform: translateY(-1px);
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.dash-banner-perfil-icone {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.dash-banner-perfil-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.dash-banner-perfil-texto strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: #7a5500;
+}
+
+.dash-banner-perfil-texto span {
+  font-size: 12px;
+  color: #8a6510;
+}
+
+.dash-banner-perfil-cta {
+  font-size: 13px;
+  font-weight: 700;
+  color: #b07000;
+  white-space: nowrap;
+}
+
+/* ── cards rápidos ───────────────────────────── */
+.dash-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+@media (min-width: 600px) {
+  .dash-cards { grid-template-columns: repeat(4, 1fr); }
+}
+
+.dash-card {
+  background: #ffffff;
+  border: 1px solid #e8d8dc;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: box-shadow 0.15s;
+}
+
+.dash-card:hover {
+  box-shadow: 0 2px 12px rgba(180, 90, 110, 0.08);
+}
+
+.dash-card--destaque {
+  background: linear-gradient(135deg, #c9748a 0%, #b5607a 100%);
+  border-color: transparent;
+}
+
+.dash-card--destaque .dash-card-label {
+  color: rgba(255,255,255,0.8);
+}
+
+.dash-card--destaque .dash-card-valor {
+  color: #ffffff;
+}
+
+.dash-card-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #c9748a;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.dash-card-valor {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2e2a2b;
+}
+
+/* ── seção genérica ──────────────────────────── */
+.dash-secao {
+  background: #ffffff;
+  border: 1px solid #e8d8dc;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.dash-secao-titulo {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2e2a2b;
+  margin: 0 0 16px;
+}
+
+.dash-vazio {
+  text-align: center;
+  color: #6b6568;
+  font-size: 14px;
+  padding: 16px 0 4px;
+}
+
+/* ── destaques ───────────────────────────────── */
+.dash-destaques {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.dash-destaque {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #ffffff;
+  border: 1px solid #e8d8dc;
+  border-radius: 12px;
+  padding: 14px 16px;
+  transition: box-shadow 0.15s;
+}
+
+.dash-destaque:hover {
+  box-shadow: 0 2px 12px rgba(180, 90, 110, 0.08);
+}
+
+.dash-destaque-icone {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.dash-destaque > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.dash-destaque-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #c9748a;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.dash-destaque-val {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2e2a2b;
+}
+
+/* ── próximos agendamentos ───────────────────── */
+.dash-proximos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dash-proximo-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0dde3;
+}
+
+.dash-proximo-card:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.dash-proximo-hora {
+  font-size: 15px;
+  font-weight: 700;
+  color: #c9748a;
+  min-width: 44px;
+}
+
+.dash-proximo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.dash-proximo-cliente {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2e2a2b;
+}
+
+.dash-proximo-proc {
+  font-size: 12px;
+  color: #6b6568;
+}
+
+.dash-proximo-status {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b6568;
+  background: #f0dde3;
+  padding: 3px 10px;
+  border-radius: 20px;
+}

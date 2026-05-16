@@ -8,29 +8,9 @@ import Procedimentos from './components/Procedimentos/Procedimentos'
 import Agendamento from './components/Agendamento/Agendamento'
 import Agendamentos from './components/Agendamentos/Agendamentos'
 import Clientes from './components/Clientes/Clientes'
-
-// Placeholder — será substituído pela tela real
-function Dashboard() {
-  return (
-    <div style={{ fontFamily: 'DM Sans, sans-serif', color: '#2e2a2b' }}>
-      <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 24, marginBottom: 8 }}>
-        Dashboard
-      </h2>
-      <p style={{ color: '#6b6568', fontSize: 14 }}>Em construção...</p>
-    </div>
-  )
-}
-
-function Profissionais() {
-  return (
-    <div style={{ fontFamily: 'DM Sans, sans-serif', color: '#2e2a2b' }}>
-      <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 24, marginBottom: 8 }}>
-        Profissionais
-      </h2>
-      <p style={{ color: '#6b6568', fontSize: 14 }}>Em construção...</p>
-    </div>
-  )
-}
+import Dashboard from './components/Dashboard/Dashboard'
+import Renda from './components/Renda/Renda'
+import Perfil from './components/Perfil/Perfil'
 
 export default function App() {
   return (
@@ -49,11 +29,12 @@ export default function App() {
           {/* Protegidas — todas dentro do HomeLayout */}
           <Route element={<PrivateRoute />}>
             <Route element={<HomeLayout />}>
-              <Route path="/home"                 element={<Dashboard />} />
+              <Route path="/home"               element={<Dashboard />} />
+              <Route path="/home/agendamentos"  element={<Agendamentos />} />
               <Route path="/home/procedimentos" element={<Procedimentos />} />
-              <Route path="/home/agendamentos"    element={<Agendamentos />} />
-              <Route path="/home/profissionais"   element={<Profissionais />} />
-              <Route path="/home/clientes"        element={<Clientes />} />
+              <Route path="/home/clientes"      element={<Clientes />} />
+              <Route path="/home/renda"         element={<Renda />} />
+              <Route path="/home/perfil"        element={<Perfil />} />
             </Route>
           </Route>
 

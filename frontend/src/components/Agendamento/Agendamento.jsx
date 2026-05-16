@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import api from '../../api/api'
 import './Agendamento.css'
@@ -74,6 +74,29 @@ export default function Agendamento() {
 
   const dias = proximosDias(14)
 
+  // ── drag scroll no carrossel de datas ────────────────────────────────────
+  const datasRef  = useRef(null)
+  const dragState = useRef({ active: false, startX: 0, scrollLeft: 0 })
+
+  function onMouseDown(e) {
+    const el = datasRef.current
+    dragState.current = { active: true, startX: e.pageX - el.offsetLeft, scrollLeft: el.scrollLeft }
+    el.classList.add('dragging')
+  }
+
+  function onMouseMove(e) {
+    if (!dragState.current.active) return
+    e.preventDefault()
+    const el   = datasRef.current
+    const walk = (e.pageX - el.offsetLeft - dragState.current.startX) * 1.2
+    el.scrollLeft = dragState.current.scrollLeft - walk
+  }
+
+  function onMouseUp() {
+    dragState.current.active = false
+    datasRef.current?.classList.remove('dragging')
+  }
+
   // ── carrega profissional e procedimentos ──────────────────────────────────
   useEffect(() => {
     async function carregar() {
@@ -83,7 +106,13 @@ export default function Agendamento() {
           api.get(`/procedures/public/${profissionalId}`),
         ])
         const u = profRes.data
-        setProfissional({ nome: u.name, id: u.id })
+        setProfissional({
+          nome:          u.name,
+          id:            u.id,
+          especialidade: u.especialidade ?? null,
+          bio:           u.bio ?? null,
+          endereco:      u.endereco ?? null,
+        })
         setWorkDays(u.workDays ?? [])
         setProcedimentos(procRes.data)
       } catch {
@@ -212,8 +241,18 @@ export default function Agendamento() {
         </div>
         <div className="ag-header-info">
           <h1>{profissional?.nome}</h1>
+          {profissional?.especialidade && (
+            <p className="ag-especialidade">{profissional.especialidade}</p>
+          )}
+          {profissional?.endereco && (
+            <p className="ag-endereco">📍 {profissional.endereco}</p>
+          )}
         </div>
       </header>
+
+      {profissional?.bio && (
+        <p className="ag-bio">{profissional.bio}</p>
+      )}
 
       {/* ── Procedimentos ── */}
       <section className="ag-secao">
@@ -246,7 +285,15 @@ export default function Agendamento() {
         <section id="secao-data" className="ag-secao">
           <h2 className="ag-secao-titulo">Escolha uma data</h2>
           <p className="ag-secao-sub">Próximos 14 dias</p>
-          <div className="ag-datas">
+          <div className="ag-datas-wrapper">
+            <div
+              className="ag-datas"
+              ref={datasRef}
+              onMouseDown={onMouseDown}
+              onMouseMove={onMouseMove}
+              onMouseUp={onMouseUp}
+              onMouseLeave={onMouseUp}
+            >
             {dias.map((dia) => {
               const dateObj   = new Date(dia + 'T00:00:00')
               const diaSemana = DIAS_SEMANA[dateObj.getDay()]
@@ -265,6 +312,7 @@ export default function Agendamento() {
                 </button>
               )
             })}
+            </div>
           </div>
         </section>
       )}
