@@ -1,25 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import api from '../../api/api'
 import './Agendamento.css'
-
-// ─── Mock para desenvolvimento sem API ──────────────────────────────────────
-const MOCK = {
-  profissional: {
-    nome: 'Dina Oliveira',
-    especialidade: 'Esteticista & Designer de Sobrancelhas',
-    foto: null,
-    bio: 'Especialista em design de sobrancelhas e procedimentos faciais com mais de 8 anos de experiência.',
-    endereco: 'Rua das Flores, 142 – Simões Filho, BA',
-  },
-  procedimentos: [
-    { id: 1, nome: 'Design de Sobrancelhas', preco: 45,  duracao: 40,  descricao: 'Modelagem com pinça e linha' },
-    { id: 2, nome: 'Limpeza de Pele',        preco: 120, duracao: 90,  descricao: 'Extração + máscara hidratante' },
-    { id: 3, nome: 'Micropigmentação',       preco: 350, duracao: 180, descricao: 'Técnica fio a fio' },
-    { id: 4, nome: 'Hydra Gloss Labial',     preco: 80,  duracao: 60,  descricao: 'Volumização natural dos lábios' },
-  ],
-  horarios: ['09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00'],
-}
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function formatarPreco(valor) {
@@ -40,18 +22,44 @@ function mascaraTelefone(valor) {
   return nums.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3')
 }
 
+function formatarData(dateStr) {
+  const [year, month, day] = dateStr.split('-')
+  return `${day}/${month}/${year}`
+}
+
+function toISODate(date) {
+  return date.toISOString().split('T')[0]
+}
+
+function proximosDias(quantidade) {
+  const dias = []
+  const hoje = new Date()
+  for (let i = 0; i < quantidade; i++) {
+    const d = new Date(hoje)
+    d.setDate(hoje.getDate() + i)
+    dias.push(toISODate(d))
+  }
+  return dias
+}
+
+const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function Agendamento() {
   const { profissionalId } = useParams()
 
   const [profissional, setProfissional]   = useState(null)
   const [procedimentos, setProcedimentos] = useState([])
-  const [horarios, setHorarios]           = useState([])
   const [carregando, setCarregando]       = useState(true)
-  const [usandoMock, setUsandoMock]       = useState(false)
+  const [erroCarregar, setErroCarregar]   = useState(false)
 
   const [procedimentoSelecionado, setProcedimentoSelecionado] = useState(null)
+  const [dataSelecionada, setDataSelecionada]                 = useState(null)
   const [horarioSelecionado, setHorarioSelecionado]           = useState(null)
+
+  const [slots, setSlots]                     = useState([])
+  const [carregandoSlots, setCarregandoSlots] = useState(false)
+  const [erroSlots, setErroSlots]             = useState(false)
 
   const [modalAberto, setModalAberto] = useState(false)
   const [nome, setNome]               = useState('')
@@ -61,35 +69,21 @@ export default function Agendamento() {
 
   const [confirmado, setConfirmado] = useState(false)
 
+  const dias = proximosDias(14)
+
+  // ── carrega profissional e procedimentos ──────────────────────────────────
   useEffect(() => {
     async function carregar() {
       try {
-        // Profissional e procedimentos são independentes — busca em paralelo
         const [profRes, procRes] = await Promise.all([
           api.get(`/users/${profissionalId}`),
           api.get(`/procedures/public/${profissionalId}`),
         ])
-
-        // UserResponse usa campos em inglês
         const u = profRes.data
-        setProfissional({
-          nome:         u.name,
-          especialidade: null,
-          foto:         null,
-          bio:          null,
-          endereco:     null,
-        })
+        setProfissional({ nome: u.name, id: u.id })
         setProcedimentos(procRes.data)
-
-        // Horários: endpoint ainda não existe — usa lista estática
-        setHorarios(MOCK.horarios)
-
       } catch {
-        // Só cai no mock completo se profissional ou procedimentos falharem
-        setProfissional(MOCK.profissional)
-        setProcedimentos(MOCK.procedimentos)
-        setHorarios(MOCK.horarios)
-        setUsandoMock(true)
+        setErroCarregar(true)
       } finally {
         setCarregando(false)
       }
@@ -97,12 +91,42 @@ export default function Agendamento() {
     carregar()
   }, [profissionalId])
 
+  // ── carrega slots ao selecionar data ─────────────────────────────────────
+  const carregarSlots = useCallback(async (data) => {
+    setCarregandoSlots(true)
+    setErroSlots(false)
+    setHorarioSelecionado(null)
+    setSlots([])
+    try {
+      const { data: resultado } = await api.get(
+        `/appointments/public/${profissionalId}/available-slots`,
+        { params: { date: data } }
+      )
+      setSlots(resultado)
+    } catch {
+      setErroSlots(true)
+    } finally {
+      setCarregandoSlots(false)
+    }
+  }, [profissionalId])
+
   function selecionarProcedimento(proc) {
     setProcedimentoSelecionado(proc)
+    setDataSelecionada(null)
     setHorarioSelecionado(null)
+    setSlots([])
+    setTimeout(() => {
+      document.getElementById('secao-data')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 100)
+  }
+
+  function selecionarData(data) {
+    setDataSelecionada(data)
+    setHorarioSelecionado(null)
+    carregarSlots(data)
     setTimeout(() => {
       document.getElementById('secao-horarios')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }, 100)
+    }, 300)
   }
 
   async function confirmarAgendamento(e) {
@@ -116,29 +140,41 @@ export default function Agendamento() {
     setEnviando(true)
     setErroForm('')
 
+    // slots da API vêm como "HH:mm:ss", monta ISO sem adicionar segundos extras
+    const startTime = `${dataSelecionada}T${horarioSelecionado}`
+
     try {
-      await api.post('/agendamentos', {
+      await api.post('/appointments/public', {
         profissionalId,
-        procedimentoId:  procedimentoSelecionado.id,
-        horario:         horarioSelecionado,
-        clienteNome:     nomeT,
-        clienteTelefone: telT,
+        procedureId:  procedimentoSelecionado.id,
+        startTime,
+        clientName:   nomeT,
+        clientPhone:  telT,
       })
       setModalAberto(false)
       setConfirmado(true)
-    } catch {
-      setErroForm('Não foi possível confirmar. Tente novamente.')
+    } catch (err) {
+      const msg = err?.response?.data?.message
+      setErroForm(msg ?? 'Não foi possível confirmar. Tente novamente.')
     } finally {
       setEnviando(false)
     }
   }
 
-  // ── estados especiais ────────────────────────────────────────────────────────
+  // ── estados especiais ─────────────────────────────────────────────────────
   if (carregando) {
     return (
       <div className="ag-loading">
         <div className="ag-spinner" />
         <p>Carregando...</p>
+      </div>
+    )
+  }
+
+  if (erroCarregar) {
+    return (
+      <div className="ag-loading">
+        <p>Profissional não encontrada.</p>
       </div>
     )
   }
@@ -149,10 +185,12 @@ export default function Agendamento() {
         <div className="ag-confirmado-icone">✓</div>
         <h2>Agendamento confirmado!</h2>
         <p>
-          <strong>{procedimentoSelecionado?.name ?? procedimentoSelecionado?.nome}</strong> com{' '}
+          <strong>{procedimentoSelecionado?.name}</strong> com{' '}
           <strong>{profissional?.nome}</strong>
         </p>
-        <p className="ag-confirmado-horario">às {horarioSelecionado}</p>
+        <p className="ag-confirmado-horario">
+          {formatarData(dataSelecionada)} às {horarioSelecionado.substring(0, 5)}
+        </p>
         <p className="ag-confirmado-sub">
           {profissional?.nome} entrará em contato pelo WhatsApp para confirmar os detalhes.
         </p>
@@ -160,34 +198,20 @@ export default function Agendamento() {
     )
   }
 
-  // ── render ────────────────────────────────────────────────────────────────────
+  // ── render ────────────────────────────────────────────────────────────────
   return (
     <div className="ag-page">
 
-      {usandoMock && (
-        <div className="ag-aviso-mock">
-          ⚠ API indisponível — exibindo dados de demonstração
-        </div>
-      )}
-
       <header className="ag-header">
         <div className="ag-avatar">
-          {profissional?.foto
-            ? <img src={profissional.foto} alt={profissional.nome} />
-            : <span>{profissional?.nome?.[0] ?? 'D'}</span>
-          }
+          <span>{profissional?.nome?.[0] ?? 'D'}</span>
         </div>
         <div className="ag-header-info">
           <h1>{profissional?.nome}</h1>
-          <p className="ag-especialidade">{profissional?.especialidade}</p>
-          {profissional?.endereco && (
-            <p className="ag-endereco">📍 {profissional.endereco}</p>
-          )}
         </div>
       </header>
 
-      {profissional?.bio && <p className="ag-bio">{profissional.bio}</p>}
-
+      {/* ── Procedimentos ── */}
       <section className="ag-secao">
         <h2 className="ag-secao-titulo">Procedimentos</h2>
         <p className="ag-secao-sub">Selecione o serviço desejado</p>
@@ -199,11 +223,12 @@ export default function Agendamento() {
               onClick={() => selecionarProcedimento(proc)}
             >
               <div className="ag-proc-topo">
-                <span className="ag-proc-nome">{proc.name ?? proc.nome}</span>
-                <span className="ag-proc-preco">{formatarPreco(proc.price ?? proc.preco)}</span>
+                <span className="ag-proc-nome">{proc.name}</span>
+                <span className="ag-proc-preco">{formatarPreco(proc.price)}</span>
               </div>
-              {(proc.description ?? proc.descricao) && <p className="ag-proc-desc">{proc.description ?? proc.descricao}</p>}
-              {(proc.duration ?? proc.duracao) && <span className="ag-proc-duracao">⏱ {formatarDuracao(proc.duration ?? proc.duracao)}</span>}
+              {proc.duration && (
+                <span className="ag-proc-duracao">⏱ {formatarDuracao(proc.duration)}</span>
+              )}
               {procedimentoSelecionado?.id === proc.id && (
                 <span className="ag-proc-check">✓ Selecionado</span>
               )}
@@ -212,35 +237,82 @@ export default function Agendamento() {
         </div>
       </section>
 
+      {/* ── Seleção de data ── */}
       {procedimentoSelecionado && (
-        <section id="secao-horarios" className="ag-secao ag-secao-horarios">
-          <h2 className="ag-secao-titulo">Horários disponíveis</h2>
-          <p className="ag-secao-sub">
-            Para <strong>{procedimentoSelecionado.name ?? procedimentoSelecionado.nome}</strong>
-            {(procedimentoSelecionado.duration ?? procedimentoSelecionado.duracao) && ` · ${formatarDuracao(procedimentoSelecionado.duration ?? procedimentoSelecionado.duracao)}`}
-          </p>
-          <div className="ag-horarios">
-            {horarios.map((h) => (
-              <button
-                key={h}
-                className={`ag-horario-btn ${horarioSelecionado === h ? 'selecionado' : ''}`}
-                onClick={() => setHorarioSelecionado(h)}
-              >
-                {h}
-              </button>
-            ))}
+        <section id="secao-data" className="ag-secao">
+          <h2 className="ag-secao-titulo">Escolha uma data</h2>
+          <p className="ag-secao-sub">Próximos 14 dias</p>
+          <div className="ag-datas">
+            {dias.map((dia) => {
+              const dateObj  = new Date(dia + 'T00:00:00')
+              const diaSemana = DIAS_SEMANA[dateObj.getDay()]
+              const [, mes, d] = dia.split('-')
+              return (
+                <button
+                  key={dia}
+                  className={`ag-data-btn ${dataSelecionada === dia ? 'selecionado' : ''}`}
+                  onClick={() => selecionarData(dia)}
+                >
+                  <span className="ag-data-semana">{diaSemana}</span>
+                  <span className="ag-data-dia">{d}/{mes}</span>
+                </button>
+              )
+            })}
           </div>
         </section>
       )}
 
+      {/* ── Horários disponíveis ── */}
+      {dataSelecionada && (
+        <section id="secao-horarios" className="ag-secao ag-secao-horarios">
+          <h2 className="ag-secao-titulo">Horários disponíveis</h2>
+          <p className="ag-secao-sub">
+            {formatarData(dataSelecionada)} · <strong>{procedimentoSelecionado.name}</strong>
+            {procedimentoSelecionado.duration && ` · ${formatarDuracao(procedimentoSelecionado.duration)}`}
+          </p>
+
+          {carregandoSlots && (
+            <div className="ag-loading" style={{ minHeight: 80 }}>
+              <div className="ag-spinner" />
+            </div>
+          )}
+
+          {!carregandoSlots && erroSlots && (
+            <p className="ag-erro">Não foi possível carregar os horários. Tente novamente.</p>
+          )}
+
+          {!carregandoSlots && !erroSlots && slots.length === 0 && (
+            <p className="ag-secao-sub">Nenhum horário disponível para esta data.</p>
+          )}
+
+          {!carregandoSlots && !erroSlots && slots.length > 0 && (
+            <div className="ag-horarios">
+              {slots.map((h) => {
+                const exibicao = h.substring(0, 5) // "HH:mm:ss" → "HH:mm"
+                return (
+                  <button
+                    key={h}
+                    className={`ag-horario-btn ${horarioSelecionado === h ? 'selecionado' : ''}`}
+                    onClick={() => setHorarioSelecionado(h)}
+                  >
+                    {exibicao}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* ── Footer de confirmação ── */}
       {procedimentoSelecionado && horarioSelecionado && (
         <div className="ag-footer">
           <div className="ag-resumo">
-            <span>{procedimentoSelecionado.name ?? procedimentoSelecionado.nome}</span>
+            <span>{procedimentoSelecionado.name}</span>
             <span className="ag-resumo-sep">·</span>
-            <span>{horarioSelecionado}</span>
+            <span>{formatarData(dataSelecionada)} às {horarioSelecionado.substring(0, 5)}</span>
             <span className="ag-resumo-sep">·</span>
-            <strong>{formatarPreco(procedimentoSelecionado.price ?? procedimentoSelecionado.preco)}</strong>
+            <strong>{formatarPreco(procedimentoSelecionado.price)}</strong>
           </div>
           <button
             className="ag-btn-confirmar"
@@ -251,6 +323,7 @@ export default function Agendamento() {
         </div>
       )}
 
+      {/* ── Modal de dados do cliente ── */}
       {modalAberto && (
         <div
           className="ag-overlay"
@@ -265,15 +338,15 @@ export default function Agendamento() {
             <div className="ag-modal-resumo">
               <div className="ag-modal-resumo-item">
                 <span className="ag-modal-resumo-label">Procedimento</span>
-                <span>{procedimentoSelecionado?.name ?? procedimentoSelecionado?.nome}</span>
+                <span>{procedimentoSelecionado?.name}</span>
               </div>
               <div className="ag-modal-resumo-item">
-                <span className="ag-modal-resumo-label">Horário</span>
-                <span>{horarioSelecionado}</span>
+                <span className="ag-modal-resumo-label">Data e horário</span>
+                <span>{formatarData(dataSelecionada)} às {horarioSelecionado.substring(0, 5)}</span>
               </div>
               <div className="ag-modal-resumo-item">
                 <span className="ag-modal-resumo-label">Valor</span>
-                <strong>{formatarPreco(procedimentoSelecionado?.price ?? procedimentoSelecionado?.preco)}</strong>
+                <strong>{formatarPreco(procedimentoSelecionado?.price)}</strong>
               </div>
             </div>
 

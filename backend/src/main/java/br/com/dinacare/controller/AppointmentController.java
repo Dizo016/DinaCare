@@ -4,6 +4,7 @@ import br.com.dinacare.domain.appointment.AppointmentRequest;
 import br.com.dinacare.domain.appointment.AppointmentResponse;
 import br.com.dinacare.domain.appointment.AppointmentStatus;
 import br.com.dinacare.domain.appointment.PaymentStatus;
+import br.com.dinacare.domain.appointment.PublicAppointmentRequest;
 import br.com.dinacare.service.appointment.AppointmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +28,18 @@ public class AppointmentController {
     @PostMapping
     public ResponseEntity<AppointmentResponse> create(@RequestBody @Valid AppointmentRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(appointmentService.create(request));
+    }
+
+    @PostMapping("/public")
+    public ResponseEntity<AppointmentResponse> createPublic(@RequestBody @Valid PublicAppointmentRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(appointmentService.createPublic(request));
+    }
+
+    @GetMapping("/public/{userId}/available-slots")
+    public ResponseEntity<List<LocalTime>> getAvailableSlots(
+            @PathVariable UUID userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return ResponseEntity.ok(appointmentService.getAvailableSlots(userId, date));
     }
 
     @GetMapping("/user/{userId}")

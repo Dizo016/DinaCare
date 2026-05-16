@@ -220,6 +220,58 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+.ag-datas {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+}
+
+.ag-datas::-webkit-scrollbar {
+  display: none;
+}
+
+.ag-data-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+  min-width: 56px;
+  background: #ffffff;
+  border: 1px solid #e8d8dc;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.ag-data-btn:hover {
+  background: #fdf0f3;
+  border-color: #c9748a;
+}
+
+.ag-data-btn.selecionado {
+  background: #c9748a;
+  border-color: #c9748a;
+  color: #ffffff;
+}
+
+.ag-data-semana {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: inherit;
+}
+
+.ag-data-dia {
+  font-size: 14px;
+  font-weight: 500;
+  color: inherit;
+}
+
 .ag-horarios {
   display: flex;
   flex-wrap: wrap;
